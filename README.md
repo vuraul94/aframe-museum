@@ -71,6 +71,8 @@ public/
       setup.js           scene-toggle (switches <a-scene> components live)
       bounds.js          room-bounds: walls the camera cannot cross (doorways open in one scene)
       streaming.js       room-streamer: mounts near rooms, unmounts and disposes far ones
+      shadows.js         shadow-budget: only the current room's lights update their shadows
+      resolution.js      dynamic-resolution: pixel ratio follows the frame rate
       ecs-demo.js        spin, bob, color-cycle, ecs-toggle, ecs-inspector, pbr-grid
       materials.js       canvas-texture, plasma-texture, svg-texture, PMREM environment, lights
       interaction.js     interactive-exhibit (mouseenter / mouseleave / click)
@@ -102,6 +104,13 @@ public/
 **External models and animations:** A-Frame loads glTF/GLB natively (`gltf-model`) and `obj-model`; other formats (FBX, USDZ…) need a Three.js loader inside a component. The animation clips in a glTF are not played automatically: use `animation-mixer` from [aframe-extras](https://github.com/c-frame/aframe-extras) or a `THREE.AnimationMixer` (this project's `gltf-animation`). For characters, Mixamo (rig + mocap) → FBX → Blender → export `.glb`, and compress with `gltf-transform` (Draco / Meshopt). The **Blender** panel in room 2 walks through exporting an animation: named Actions, baking constraints/drivers, applying scale, then File › Export › glTF 2.0 with Animation on (mode "Actions" = one clip per action). Raycasting skinned meshes is unreliable and costly, so the fox has an invisible hit box for clicks.
 
 **Streaming (memory):** in the one-scene version only the rooms near the visitor are in the scene. `museum-loader.js` mounts each room's anchor (the `museum-station` entity, so navigation and walls work) and keeps its content as a template; `room-streamer` (on `<a-scene>`) mounts a room when its nearest edge is within reach and unmounts it when it leaves, disposing its geometries, materials and textures. Reach is `fog.far` when there is fog (what the fog hides is not loaded at all) and one room (`radius`) otherwise. On start only rooms 1–2 are loaded (28 textures / 51 geometries instead of 78 / 138 with everything). Trade-offs: an unloaded room loses its state (open panels, toggled components) and loading a room costs a short hitch. The AR fox (`data-mount="scene"`) is always mounted because scene components reference it at start-up. The scene-per-room version already loads one room only.
+
+**Frame rate:** measured in Chrome (Intel Iris Xe, 1920×893) walking with WASD from room 1 to the forest. The scene is fill-rate bound (only ~18–35k triangles, but halving the resolution doubles the FPS), so three things help:
+- `dynamic-resolution` (on `<a-scene>`): lowers the pixel ratio below 40 FPS and raises it above 55, down to `min: 0.5`; not used in VR/AR. Raise `min` for sharper text on slow GPUs.
+- `shadow-budget`: only the current room's lights update their shadow maps (the orbiting point light alone renders the scene 6 times per frame).
+- Lights are never streamed (adding/removing a light recompiles every shader), and the forest is generated once and cached.
+
+Result of the walk: 17 → 30 FPS on average, p95 frame 80 → 47 ms, frames over 100 ms 24 → 3. In steady state, streaming alone already gave 20.5 FPS vs 14.9 with every room loaded (`index.html?stream=0` to compare).
 
 **Walls:** `room-bounds` (on `#rig`) stops the camera at the walls. Every frame it checks the camera's world position and pushes the rig back if that spot is not walkable, so it works with WASD, the VR thumbstick and real walking with a headset; moves are resolved per axis, so you slide along walls. In the one-scene version you can walk from room to room through the doorways (each room's side limits come from its `museum-station` `bounds`, default ±6.5 m, the forest is wider) and the room you walk into becomes the current one. In the scene-per-room version each room is closed. It pauses while teleporting between rooms and in AR.
 

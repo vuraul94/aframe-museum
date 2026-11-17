@@ -12,6 +12,12 @@
  *
  * Trade-off: an unmounted room loses its state (open panels, toggled
  * components) and mounting a room costs a short hitch (DOM + GPU upload).
+ * To keep hitches rare:
+ *  - hysteresis: a room unloads only `margin` meters beyond the reach, so
+ *    standing near the limit does not mount / unmount it over and over;
+ *  - materials are not disposed: that would also release their compiled
+ *    shaders, and recompiling them on the way back is the costliest part.
+ *    Geometries and textures (the actual memory) are freed.
  * With the stats component on you can watch Textures / Geometries change.
  */
 import { ROOM_CONTENT } from '../core/museum-loader.js';
@@ -19,13 +25,12 @@ import { STATION_SPACING } from '../config.js';
 
 const cam = new THREE.Vector3();
 
-/** Every GPU resource under an Object3D (the scene environment map is shared) */
+/** Geometries and textures under an Object3D (the scene environment map is shared) */
 function collectResources(object, keep) {
   const found = new Set();
   object.traverse(o => {
     if (o.geometry) found.add(o.geometry);
     for (const m of [].concat(o.material || [])) {
-      found.add(m);
       for (const v of Object.values(m)) if (v && v.isTexture && v !== keep) found.add(v);
     }
   });
@@ -35,6 +40,7 @@ function collectResources(object, keep) {
 AFRAME.registerComponent('room-streamer', {
   schema: {
     radius: { default: 1 },        // rooms, when there is no fog
+    margin: { default: 4 },        // extra meters before a loaded room unloads
     interval: { default: 400 }     // ms between checks
   },
 
@@ -65,9 +71,9 @@ AFRAME.registerComponent('room-streamer', {
     stations.forEach((s, i) => {
       if (!s || !ROOM_CONTENT[i]) return;
       const edge = Math.max(0, Math.abs(z - s.el.object3D.position.z) - half);
-      const near = i === museum.current || edge < reach;
-      if (near && !this.loaded.has(i)) this.mount(i);
-      else if (!near && this.loaded.has(i)) this.unmount(i);
+      const current = i === museum.current;
+      if (!this.loaded.has(i) && (current || edge < reach)) this.mount(i);
+      else if (this.loaded.has(i) && !current && edge > reach + this.data.margin) this.unmount(i);
     });
   },
 
@@ -88,7 +94,7 @@ AFRAME.registerComponent('room-streamer', {
       if (el.object3D) for (const r of collectResources(el.object3D, keep)) resources.add(r);
       el.remove();   // A-Frame runs every component's remove()
     }
-    // Free GPU memory (anything still shared elsewhere is simply re-uploaded)
+    // Free GPU memory (anything still used elsewhere is simply re-uploaded)
     resources.forEach(r => r.dispose());
     this.loaded.delete(i);
     this.el.emit('room-unloaded', { index: i });

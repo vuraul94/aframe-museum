@@ -5,6 +5,7 @@
   <title>A-Frame · Interactive Museum</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <link rel="stylesheet" href="css/hud.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 6 58 52H6z' fill='%23ef2d5e'/%3E%3C/svg%3E">
 
   <!-- Relative paths everywhere: the same files work with `npm start` and under /<repo>/ on GitHub Pages -->
   <!-- A-Frame internal assets (MSDF fonts, controller models) served and cached by the Node server -->
@@ -48,6 +49,8 @@
     ar-mode-handler
     renderer="antialias: true; colorManagement: true; toneMapping: ACESFilmic; exposure: 1.1"
     shadow="type: pcfsoft"
+    shadow-budget
+    dynamic-resolution
     webxr="optionalFeatures: hit-test, local-floor, bounded-floor"
     xr-mode-ui="enabled: true; XRMode: xr"
     ar-hit-test="target: #arExhibit"

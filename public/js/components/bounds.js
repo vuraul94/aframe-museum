@@ -28,16 +28,24 @@ AFRAME.registerComponent('room-bounds', {
     this.last = null;   // last walkable camera position (x, z)
   },
 
-  /** Rooms present in this scene, sorted along the corridor */
+  /** Rooms present in this scene, sorted along the corridor (cached: stations do not move) */
   rooms() {
-    return this.museum.stations
-      .map((s, index) => s && { ...s, index, x: s.el.object3D.position.x, z: s.el.object3D.position.z })
-      .filter(Boolean);
+    const stations = this.museum.stations;
+    if (!this.cache || this.cacheSize !== stations.length) {
+      this.cacheSize = stations.length;
+      this.cache = stations
+        .map((s, index) => s && { ...s, index, x: s.el.object3D.position.x, z: s.el.object3D.position.z })
+        .filter(Boolean)
+        .sort((a, b) => b.z - a.z);
+    }
+    return this.cache;
   },
 
   /** Room whose area contains z (partitions sit halfway between two rooms) */
   roomAt(rooms, z) {
-    return rooms.reduce((best, r) => (Math.abs(r.z - z) < Math.abs(best.z - z) ? r : best), rooms[0]);
+    let best = rooms[0];
+    for (const r of rooms) if (Math.abs(r.z - z) < Math.abs(best.z - z)) best = r;
+    return best;
   },
 
   walkable(rooms, x, z) {
@@ -60,7 +68,7 @@ AFRAME.registerComponent('room-bounds', {
     const scene = this.el.sceneEl, museum = this.museum;
     if (!this.data.enabled || scene.is('ar-mode')) return;
     if (museum.moving) { this.last = null; return; }
-    const rooms = this.rooms().sort((a, b) => b.z - a.z);
+    const rooms = this.rooms();
     if (!rooms.length || !scene.camera) return;
 
     scene.camera.getWorldPosition(cam);
@@ -73,7 +81,8 @@ AFRAME.registerComponent('room-bounds', {
       this.el.object3D.position.x += x - cam.x;
       this.el.object3D.position.z += z - cam.z;
     }
-    this.last = { x, z };
+    if (!this.last) this.last = { x, z };   // reused: no allocation per frame
+    else { this.last.x = x; this.last.z = z; }
 
     // One scene: walking through a doorway changes the current room
     if (!museum.roomMode) {

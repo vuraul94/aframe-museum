@@ -69,7 +69,6 @@ AFRAME.registerComponent('html-iframe', {
     this.iframe = document.createElement('iframe');
     this.iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen');
     this.iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
-    this.iframe.setAttribute('allowfullscreen', '');
     this.wrap.appendChild(this.iframe);
     layer.camera.appendChild(this.wrap);
 

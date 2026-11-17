@@ -15,8 +15,10 @@
  * Streaming (one scene): only each room's anchor is mounted up front (the
  * museum-station entity, so navigation and walls work). Its content stays
  * here, in ROOM_CONTENT, and the room-streamer component mounts / unmounts it
- * when the visitor gets near / far. data-mount="scene" elements (the AR fox)
- * are always mounted: scene components reference them at start-up.
+ * when the visitor gets near / far. Always mounted: data-mount="scene"
+ * elements (the AR fox, which scene components reference at start-up) and
+ * every part of a room that contains a light (adding or removing a light
+ * makes Three.js recompile every shader in the scene: a long hitch).
  */
 import { ROOM_FILES, STATIONS } from '../config.js';
 
@@ -65,9 +67,13 @@ export async function mountMuseum(rooms, { room = -1, stream = false } = {}) {
       const target = { scene, body: document.body }[where] || museum;
       if (!content || where === 'scene') { target.appendChild(document.importNode(el, true)); continue; }
       if (el === station) {
-        // Mount just the anchor (no children); keep the children as a template
+        // Mount the anchor and the parts with lights; keep the rest as a template
         content.root = target.appendChild(document.importNode(el.cloneNode(false), true));
-        content.children = [...el.childNodes];
+        for (const child of [...el.childNodes]) {
+          const hasLight = child.nodeType === 1 && (child.matches('[light]') || child.querySelector('[light]'));
+          if (hasLight) content.root.appendChild(document.importNode(child, true));
+          else content.children.push(child);
+        }
       } else {
         content.extras.push({ target, node: el });
       }

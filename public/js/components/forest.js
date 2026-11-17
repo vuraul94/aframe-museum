@@ -50,6 +50,9 @@ function instanced(geometry, material, matrices, colors, { cast = true } = {}) {
   return mesh;
 }
 
+/** Generated forests by configuration: coming back to the room reuses it (only a GPU re-upload) */
+const FOREST_CACHE = new Map();
+
 AFRAME.registerComponent('forest-environment', {
   schema: {
     seed: { default: 42 },
@@ -63,11 +66,16 @@ AFRAME.registerComponent('forest-environment', {
   },
 
   init() {
-    this.random = rng(this.data.seed);
-    this.group = new THREE.Group();
-    this.buildGround();
-    this.buildSky();
-    this.buildVegetation();
+    const key = JSON.stringify(this.data);
+    if (!FOREST_CACHE.has(key)) {
+      this.random = rng(this.data.seed);
+      this.group = new THREE.Group();
+      this.buildGround();
+      this.buildSky();
+      this.buildVegetation();
+      FOREST_CACHE.set(key, this.group);
+    }
+    this.group = FOREST_CACHE.get(key);
     this.el.setObject3D('forest', this.group);
   },
 
