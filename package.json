@@ -1,0 +1,17 @@
+{
+  "name": "aframe-interactive-museum",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Spatial presentation: an interactive virtual museum that showcases A-Frame (ECS, animation, lights, events, spatial audio, WebXR VR/AR and the Inspector).",
+  "type": "module",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node --watch-path=server server/server.js",
+    "vendor": "node server/prefetch.js",
+    "cert": "node server/make-cert.js",
+    "build": "node server/build.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>A-Frame · Interactive Museum</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <link rel="stylesheet" href="css/hud.css">
+
+  <!-- Relative paths everywhere: the same files work with `npm start` and under /<repo>/ on GitHub Pages -->
+  <!-- A-Frame internal assets (MSDF fonts, controller models) served and cached by the Node server -->
+  <script>window.AFRAME_CDN_ROOT = 'vendor/cdn/';</script>
+  <!-- A-Frame (includes Three.js). The server downloads it once and caches it in ./vendor -->
+  <script src="vendor/aframe.min.js"></script>
+  <!-- Custom systems and components (ES modules) -->
+  <script type="module" src="js/main.js"></script>
+</head>
+
+<body>
+  <!-- ================= 2D HUD (presentation mode) ================= -->
+  <div id="hud">
+    <span class="brand">A-Frame</span>
+    <button data-station="0"><b>1</b>Entrance</button>
+    <button data-station="1"><b>2</b>Motion</button>
+    <button data-station="2"><b>3</b>Interaction</button>
+    <button data-station="3"><b>4</b>Multimedia</button>
+    <button data-station="4"><b>5</b>Forest · AR</button>
+    <button id="inspectorBtn" class="tool" title="A-Frame Inspector (E or Ctrl+Alt+I)">🛠 Inspector</button>
+    <span id="timer" title="T: start/pause · R: reset">10:00</span>
+    <!-- Same museum, one <a-scene> per room (room.html builds it from this file) -->
+    <a id="modeLink" class="mode" href="room.html?station=1" title="Switch between one scene and one scene per room">⇄ Scene per room</a>
+  </div>
+  <div id="help">
+    <kbd>1</kbd>–<kbd>5</kbd> / <kbd>N</kbd> <kbd>P</kbd> / <kbd>PageDown</kbd> <kbd>PageUp</kbd> stations ·
+    <kbd>WASD</kbd> + drag: move · <kbd>I</kbd> panels ·
+    <kbd>E</kbd> / <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>I</kbd> Inspector ·
+    <kbd>G</kbd> gaze · <kbd>T</kbd>/<kbd>R</kbd> Timer · <kbd>H</kbd> hide HUD
+  </div>
+  <div id="toast"></div>
+
+  <!-- Video for the station 4 dialog. Outside <a-assets> so it does not delay the scene;
+       served and cached by the Node server (Big Buck Bunny trailer, CC BY 3.0). -->
+  <video id="trailer" preload="auto" playsinline webkit-playsinline loop style="display: none">
+    <!-- The browser picks the first format it can decode -->
+    <source src="vendor/media/big-buck-bunny-trailer.m4v" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
+    <source src="vendor/media/big-buck-bunny-trailer.webm" type='video/webm; codecs="vp9, opus"'>
+  </video>
+
+  <!-- ================= SCENE ================= -->
+  <a-scene
+    station-nav
+    procedural-environment
+    ar-mode-handler
+    renderer="antialias: true; colorManagement: true; toneMapping: ACESFilmic; exposure: 1.1"
+    shadow="type: pcfsoft"
+    webxr="optionalFeatures: hit-test, local-floor, bounded-floor"
+    xr-mode-ui="enabled: true; XRMode: xr"
+    ar-hit-test="target: #arExhibit"
+    inspector="url: vendor/aframe-inspector.min.js"
+    cursor="rayOrigin: mouse; fuse: false"
+    raycaster="objects: .clickable; far: 30"
+    loading-screen="dotsColor: #ef2d5e; backgroundColor: #0b0f1a">
+
+    <!-- ---------- Player: rig + camera + controllers ---------- -->
+    <a-entity id="rig" position="0 0 4">
+      <a-entity id="camera" camera position="0 1.6 0"
+                look-controls="pointerLockEnabled: false"
+                wasd-controls="acceleration: 35">
+        <!-- Gaze cursor (fuse). Enabled with the G key or on mobile -->
+        <a-entity id="gaze" position="0 0 -0.8" visible="false"
+                  cursor="fuse: true; fuseTimeout: 1300"
+                  raycaster="objects: .clickable; far: 15; enabled: false"
+                  geometry="primitive: ring; radiusInner: 0.008; radiusOuter: 0.013"
+                  material="color: #ffffff; shader: flat"
+                  animation__fusing="property: scale; startEvents: fusing; from: 1 1 1; to: 0.35 0.35 0.35; dur: 1300"
+                  animation__leave="property: scale; startEvents: mouseleave; to: 1 1 1; dur: 150"></a-entity>
+      </a-entity>
+      <a-entity id="leftHand" laser-controls="hand: left" raycaster="objects: .clickable; far: 20"
+                thumbstick-locomotion vr-station-buttons></a-entity>
+      <a-entity id="rightHand" laser-controls="hand: right" raycaster="objects: .clickable; far: 20"
+                snap-turn vr-station-buttons></a-entity>
+    </a-entity>
+
+    <!-- ---------- Global lights (stay on in AR) ---------- -->
+    <a-entity light="type: hemisphere; color: #dfe6ff; groundColor: #2a2230; intensity: 1.2"></a-entity>
+    <a-entity light="type: ambient; color: #ffffff; intensity: 0.3"></a-entity>
+
+    <!-- ================= MUSEUM (hidden when entering AR) ================= -->
+    <a-entity id="museum" museum-architecture hide-on-enter-ar>
+
+      <!-- ============ STATION 1 · ENTRANCE / ECS ============ -->
+      <a-entity id="st1" museum-station="index: 0; name: Entrance" position="0 0 0">
+        <a-entity canvas-panel="id: s1-title; width: 4.4" position="0 4.2 -6.8"></a-entity>
+        <a-entity canvas-panel="id: welcome; width: 3.0" position="0 2.55 -3.2"></a-entity>
+
+        <!-- Primitives with PBR materials -->
+        <a-cylinder position="-1.1 0.275 -1.8" radius="0.3" height="0.55" material="color: #2a3042; roughness: 0.6"></a-cylinder>
+        <a-cylinder position="0 0.275 -1.8" radius="0.3" height="0.55" material="color: #2a3042; roughness: 0.6"></a-cylinder>
+        <a-cylinder position="1.1 0.275 -1.8" radius="0.3" height="0.55" material="color: #2a3042; roughness: 0.6"></a-cylinder>
+        <a-box position="-1.1 0.88 -1.8" width="0.42" height="0.42" depth="0.42" color="#ef2d5e" metalness="0.2" roughness="0.4" spin="speed: 30" shadow="cast: true"></a-box>
+        <a-sphere position="0 0.88 -1.8" radius="0.26" color="#4cc9f0" metalness="0.9" roughness="0.15" shadow="cast: true"></a-sphere>
+        <a-cylinder position="1.1 0.88 -1.8" radius="0.18" height="0.5" color="#ffb400" metalness="0.6" roughness="0.45" spin="speed: -40; axis: z" shadow="cast: true"></a-cylinder>
+        <a-entity ui-button="label: View info" info-toggle="#p-prim" position="0 0.3 -1.42"></a-entity>
+        <a-entity id="p-prim" canvas-panel="id: prim; width: 2.6" popup position="0 2.3 -0.9"></a-entity>
+
+        <!-- Live ECS demo (left) -->
+        <a-entity position="-4 0 -1.4" rotation="0 38 0">
+          <a-box position="0 0.35 0" width="0.8" height="0.7" depth="0.8" material="color: #2a3042; roughness: 0.6"></a-box>
+          <a-box id="ecsDemo" position="0 1.05 0" width="0.5" height="0.5" depth="0.5"
+                 material="color: #ef2d5e; metalness: 0.3; roughness: 0.35" shadow="cast: true"></a-box>
+          <a-entity ui-button="width: 0.55" ecs-toggle="target: #ecsDemo; component: spin" position="0.85 1.25 0.1"></a-entity>
+          <a-entity ui-button="width: 0.55" ecs-toggle="target: #ecsDemo; component: bob" position="0.85 1.0 0.1"></a-entity>
+          <a-entity ui-button="width: 0.55" ecs-toggle="target: #ecsDemo; component: color-cycle" position="0.85 0.75 0.1"></a-entity>
+          <a-entity ui-button="label: View info" info-toggle="#p-ecs" position="-0.4 0.3 0.45"></a-entity>
+          <!-- Opens the A-Frame Inspector with #ecsDemo selected -->
+          <a-entity ui-button="label: Inspector; color: #d9a400; icon: ⚙" open-inspector="#ecsDemo" position="0.4 0.3 0.45"></a-entity>
+          <a-entity ui-button="label: Inspector?; color: #d9a400; width: 0.6" info-toggle="#p-insp" position="-0.95 1.0 0.1"></a-entity>
+          <!-- How to keep Inspector edits (copy HTML, export glTF, write to index.html) -->
+          <a-entity ui-button="label: Save edits; color: #d9a400; width: 0.6; icon: ↓" info-toggle="#p-save" position="-0.95 0.75 0.1"></a-entity>
+          <a-entity canvas-panel="id: inspector; width: 1.9" ecs-inspector="#ecsDemo" position="0 2.3 -0.2"></a-entity>
+          <a-entity id="p-ecs" canvas-panel="id: ecs; width: 2.5" popup position="0 2.35 0.5"></a-entity>
+          <a-entity id="p-insp" canvas-panel="id: inspector-tool; width: 2.5" popup position="0 2.35 0.55"></a-entity>
+          <a-entity id="p-save" canvas-panel="id: inspector-save; width: 2.6" popup position="0 2.35 0.6"></a-entity>
+        </a-entity>
+
+        <!-- PBR grid (right) — generated in code by pbr-grid -->
+        <a-entity position="4 0 -1.4" rotation="0 -38 0">
+          <a-box position="0 0.3 0" width="1.6" height="0.6" depth="0.5" material="color: #2a3042; roughness: 0.6"></a-box>
+          <a-entity pbr-grid position="0 0.85 0"></a-entity>
+          <a-entity canvas-label="text: metalness 0 → 1; width: 1.4" position="0 2.25 0"></a-entity>
+          <a-entity canvas-label="text: roughness 0 → 1; width: 1.4" position="-0.9 1.4 0" rotation="0 0 -90"></a-entity>
+          <a-entity ui-button="label: View info" info-toggle="#p-pbr" position="0 0.3 0.3"></a-entity>
+          <a-entity id="p-pbr" canvas-panel="id: pbr; width: 2.4" popup position="0 2.45 0.6"></a-entity>
+        </a-entity>
+      </a-entity>
+
+      <!-- ============ STATION 2 · ANIMATION, LIGHT, TEXTURES ============ -->
+      <a-entity id="st2" museum-station="index: 1; name: Motion" position="0 0 -14">
+        <a-entity canvas-panel="id: s2-title; width: 4.4" position="0 4.2 -6.8"></a-entity>
+
+        <!-- Animations (left) -->
+        <a-entity position="-3.6 0 -1.5" rotation="0 30 0">
+          <a-cylinder radius="1.3" height="0.12" position="0 0.06 0" material="color: #2a3042; roughness: 0.6" shadow="receive: true"></a-cylinder>
+          <a-box position="-0.75 1.0 0" width="0.42" height="0.42" depth="0.42" material="color: #ffb400; roughness: 0.35; metalness: 0.2" shadow="cast: true"
+                 animation="property: rotation; to: 360 360 0; loop: true; dur: 5000; easing: linear"></a-box>
+          <a-sphere position="0 0.4 0" radius="0.22" material="color: #2ec4b6; roughness: 0.3" shadow="cast: true"
+                    animation="property: position; to: 0 1.5 0; dir: alternate; loop: true; dur: 900; easing: easeOutQuad"></a-sphere>
+          <a-torus position="0.75 1.0 0" radius="0.22" radius-tubular="0.06" material="color: #ef2d5e; roughness: 0.3; metalness: 0.3" shadow="cast: true"
+                   animation__rot="property: rotation; to: 0 360 0; loop: true; dur: 3000; easing: linear"
+                   animation__scale="property: scale; to: 1.4 1.4 1.4; dir: alternate; loop: true; dur: 1200; easing: easeInOutSine"
+                   animation__color="property: material.color; type: color; to: #4cc9f0; dir: alternate; loop: true; dur: 1200; easing: easeInOutSine"></a-torus>
+          <a-entity ui-button="label: View info; color: #e09e00" info-toggle="#p-anim" position="-0.4 0.35 1.38"></a-entity>
+          <!-- External (non-native) models and animations: glTF, Mixamo, AnimationMixer -->
+          <a-entity ui-button="label: External; color: #e09e00; icon: ⇩" info-toggle="#p-ext" position="0.4 0.35 1.38"></a-entity>
+          <a-entity id="p-anim" canvas-panel="id: anim; width: 2.4" popup position="0 2.6 0.5"></a-entity>
+          <a-entity id="p-ext" canvas-panel="id: anim-external; width: 2.6" popup position="0 2.6 0.55"></a-entity>
+        </a-entity>
+
+        <!-- Lights and shadows (center) -->
+        <a-entity position="0 0 -2.6">
+          <a-cylinder radius="1.5" height="0.12" position="0 0.06 0" material="color: #d8dce6; roughness: 0.8" shadow="receive: true"></a-cylinder>
+          <a-torus-knot position="0 1.15 0" radius="0.36" radius-tubular="0.1" p="2" q="3"
+                        material="color: #e9edf5; metalness: 0.6; roughness: 0.25" shadow="cast: true" spin="speed: 20"></a-torus-knot>
+          <a-cylinder position="0.9 0.75 0" radius="0.06" height="1.4" material="color: #c9ced8" shadow="cast: true"></a-cylinder>
+          <a-cylinder position="-0.45 0.75 0.78" radius="0.06" height="1.4" material="color: #c9ced8" shadow="cast: true"></a-cylinder>
+          <a-cylinder position="-0.45 0.75 -0.78" radius="0.06" height="1.4" material="color: #c9ced8" shadow="cast: true"></a-cylinder>
+          <!-- Orbiting point light (the animation rotates the parent) -->
+          <a-entity position="0 1.9 0" animation="property: rotation; to: 0 360 0; loop: true; dur: 7000; easing: linear">
+            <a-entity id="s2-point" position="1.3 0 0"
+                      light="type: point; color: #ffb400; intensity: 4; distance: 8; decay: 1.2; castShadow: true; shadowMapWidth: 512; shadowMapHeight: 512"></a-entity>
+            <a-sphere id="s2-bulb" position="1.3 0 0" radius="0.07" material="shader: flat; color: #ffb400"></a-sphere>
+          </a-entity>
+          <!-- Directional light with shadows aimed at the sculpture -->
+          <a-entity id="s2-target" position="0 0 0"></a-entity>
+          <a-entity position="3 7 3"
+                    light="type: directional; color: #fff4e0; intensity: 1.4; castShadow: true; target: #s2-target; shadowCameraLeft: -5; shadowCameraRight: 5; shadowCameraTop: 5; shadowCameraBottom: -5; shadowCameraFar: 20; shadowMapWidth: 1024; shadowMapHeight: 1024"></a-entity>
+          <a-entity ui-button="label: View info; color: #e09e00" info-toggle="#p-light" position="-0.4 0.32 1.6"></a-entity>
+          <a-entity ui-button="label: Light color; color: #e09e00; icon: ✦" light-color-cycle="light: #s2-point; bulb: #s2-bulb" position="0.4 0.32 1.6"></a-entity>
+          <a-entity id="p-light" canvas-panel="id: light; width: 2.4" popup position="0 2.7 1.3"></a-entity>
+        </a-entity>
+
+        <!-- Procedural textures (right) -->
+        <a-entity position="3.6 0 -1.5" rotation="0 -30 0">
+          <a-box position="0 0.95 -0.35" width="2.3" height="1.9" depth="0.1" material="color: #1b2133; roughness: 0.9"></a-box>
+          <a-box position="0 0.25 0" width="2.3" height="0.5" depth="0.6" material="color: #2a3042; roughness: 0.6"></a-box>
+          <a-box position="-0.72 0.8 0.05" width="0.5" height="0.5" depth="0.5" canvas-texture="pattern: checker" shadow="cast: true" spin="speed: 25"></a-box>
+          <a-sphere position="0 0.82 0.05" radius="0.3" canvas-texture="pattern: marble; size: 256" material="roughness: 0.2; metalness: 0" spin="speed: -20"></a-sphere>
+          <a-plane position="0.72 0.82 0.05" width="0.55" height="0.55" plasma-texture material="shader: flat"></a-plane>
+          <a-plane position="0 1.5 -0.28" width="0.7" height="0.7" svg-texture material="shader: flat"></a-plane>
+          <a-entity ui-button="label: View info; color: #e09e00" info-toggle="#p-tex" position="0 0.25 0.33"></a-entity>
+          <a-entity id="p-tex" canvas-panel="id: tex; width: 2.4" popup position="0 2.6 0.6"></a-entity>
+        </a-entity>
+      </a-entity>
+
+      <!-- ============ STATION 3 · INTERACTIVITY ============ -->
+      <a-entity id="st3" museum-station="index: 2; name: Interaction" position="0 0 -28">
+        <a-entity canvas-panel="id: s3-title; width: 4.4" position="0 4.2 -6.8"></a-entity>
+
+        <a-cylinder position="-2.6 0.45 -1.6" radius="0.35" height="0.9" material="color: #2a3042; roughness: 0.6"></a-cylinder>
+        <a-cylinder position="0 0.45 -1.6" radius="0.35" height="0.9" material="color: #2a3042; roughness: 0.6"></a-cylinder>
+        <a-cylinder position="2.6 0.45 -1.6" radius="0.35" height="0.9" material="color: #2a3042; roughness: 0.6"></a-cylinder>
+
+        <a-torus-knot position="-2.6 1.35 -1.6" radius="0.22" radius-tubular="0.06"
+                      material="color: #2ec4b6; metalness: 0.3; roughness: 0.3" shadow="cast: true" spin="speed: 25"
+                      interactive-exhibit="panel: #p-hover; label: Knot"></a-torus-knot>
+        <a-icosahedron position="0 1.35 -1.6" radius="0.3"
+                       material="color: #ff9f1c; metalness: 0.2; roughness: 0.4; flatShading: true" shadow="cast: true" spin="speed: -20"
+                       interactive-exhibit="panel: #p-click; label: Icosahedron"></a-icosahedron>
+        <a-dodecahedron position="2.6 1.35 -1.6" radius="0.3"
+                        material="color: #7b61ff; metalness: 0.5; roughness: 0.3; flatShading: true" shadow="cast: true" spin="speed: 30; axis: x"
+                        interactive-exhibit="panel: #p-laser; label: Dodecahedron"></a-dodecahedron>
+
+        <a-entity ui-button="label: View info; color: #22a397" info-toggle="#p-hover" position="-2.6 0.3 -1.2"></a-entity>
+        <a-entity ui-button="label: View info; color: #22a397" info-toggle="#p-click" position="0 0.3 -1.2"></a-entity>
+        <a-entity ui-button="label: View info; color: #22a397" info-toggle="#p-laser" position="2.6 0.3 -1.2"></a-entity>
+
+        <a-entity id="p-hover" canvas-panel="id: hover; width: 2.3" popup position="-2.6 2.65 -0.9"></a-entity>
+        <a-entity id="p-click" canvas-panel="id: click; width: 2.3" popup position="0 2.65 -0.9"></a-entity>
+        <a-entity id="p-laser" canvas-panel="id: laser; width: 2.3" popup position="2.6 2.65 -0.9"></a-entity>
+
+        <a-entity id="event-log" canvas-panel="id: log; width: 2.4" position="-4.3 2.0 -1.0" rotation="0 42 0"></a-entity>
+      </a-entity>
+
+      <!-- ============ STATION 4 · MULTIMEDIA AND MODELS ============ -->
+      <a-entity id="st4" museum-station="index: 3; name: Multimedia" position="0 0 -42">
+        <a-entity canvas-panel="id: s4-title; width: 4.4" position="0 4.2 -6.8"></a-entity>
+
+        <!-- Spatial audio (left) -->
+        <a-entity position="-3.6 0 -1.5" rotation="0 30 0">
+          <a-box position="0 0.85 0" width="0.7" height="1.1" depth="0.5" material="color: #20263a; roughness: 0.7" shadow="cast: true" audio-toggle="#speaker">
+            <a-cylinder id="spk-cone" position="0 0.15 0.26" rotation="90 0 0" radius="0.22" height="0.04" material="color: #7b61ff; metalness: 0.4; roughness: 0.4"></a-cylinder>
+            <a-cylinder position="0 -0.3 0.26" rotation="90 0 0" radius="0.08" height="0.04" material="color: #7b61ff; metalness: 0.4; roughness: 0.4"></a-cylinder>
+          </a-box>
+          <a-sound id="speaker" procedural-audio position="0 0.9 0.3"></a-sound>
+          <a-entity audio-visualizer="sound: #speaker; bars: 12; cone: #spk-cone" position="0 1.5 0"></a-entity>
+          <a-entity ui-button="label: Play; color: #6a50ee; icon: ▶" audio-toggle="#speaker" position="-0.4 0.15 0.5"></a-entity>
+          <a-entity ui-button="label: View info; color: #6a50ee" info-toggle="#p-audio" position="0.4 0.15 0.5"></a-entity>
+          <a-entity id="p-audio" canvas-panel="id: audio; width: 2.4" popup position="0 2.65 0.5"></a-entity>
+        </a-entity>
+
+        <!-- Hierarchical model: robotic arm (center) -->
+        <a-entity id="robot" position="0 0 -2.4">
+          <a-cylinder radius="0.55" height="0.14" position="0 0.07 0" material="color: #2a3042; metalness: 0.6; roughness: 0.4" shadow="cast: true; receive: true"></a-cylinder>
+          <a-entity position="0 0.14 0" animation="property: rotation; from: 0 -50 0; to: 0 50 0; dir: alternate; loop: true; dur: 3200; easing: easeInOutSine">
+            <a-cylinder radius="0.32" height="0.3" position="0 0.15 0" material="color: #c9ced8; metalness: 0.7; roughness: 0.3" shadow="cast: true"></a-cylinder>
+            <a-entity position="0 0.38 0" animation="property: rotation; from: 0 0 -25; to: 0 0 20; dir: alternate; loop: true; dur: 2600; easing: easeInOutSine">
+              <a-sphere radius="0.16" material="color: #7b61ff; metalness: 0.4; roughness: 0.3" shadow="cast: true"></a-sphere>
+              <a-box position="0 0.5 0" width="0.16" height="1" depth="0.16" material="color: #c9ced8; metalness: 0.7; roughness: 0.3" shadow="cast: true"></a-box>
+              <a-entity position="0 1 0" animation="property: rotation; from: 0 0 20; to: 0 0 75; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine">
+                <a-sphere radius="0.12" material="color: #7b61ff; metalness: 0.4; roughness: 0.3" shadow="cast: true"></a-sphere>
+                <a-box position="0 0.4 0" width="0.12" height="0.8" depth="0.12" material="color: #c9ced8; metalness: 0.7; roughness: 0.3" shadow="cast: true"></a-box>
+                <a-entity position="0 0.8 0" animation="property: rotation; to: 0 360 0; loop: true; dur: 2500; easing: linear">
+                  <a-cylinder radius="0.09" height="0.08" material="color: #7b61ff; metalness: 0.4; roughness: 0.3" shadow="cast: true"></a-cylinder>
+                  <a-box position="-0.06 0.14 0" width="0.03" height="0.2" depth="0.06" material="color: #ffb400" shadow="cast: true"
+                         animation="property: position; from: -0.06 0.14 0; to: -0.025 0.14 0; dir: alternate; loop: true; dur: 700"></a-box>
+                  <a-box position="0.06 0.14 0" width="0.03" height="0.2" depth="0.06" material="color: #ffb400" shadow="cast: true"
+                         animation="property: position; from: 0.06 0.14 0; to: 0.025 0.14 0; dir: alternate; loop: true; dur: 700"></a-box>
+                </a-entity>
+              </a-entity>
+            </a-entity>
+          </a-entity>
+          <a-entity ui-button="label: View info; color: #6a50ee" info-toggle="#p-model" position="0 0.3 0.75"></a-entity>
+        </a-entity>
+        <a-entity id="p-model" canvas-panel="id: model; width: 2.4" popup position="0 2.7 -1.0"></a-entity>
+
+        <!-- Iframe kiosk (back right): a web page and a YouTube video inside the 3D scene -->
+        <a-entity position="3.3 0 -4.9" rotation="0 -20 0">
+          <a-box position="0 0.5 0" width="1.5" height="1" depth="0.45" material="color: #2a3042; roughness: 0.6"></a-box>
+          <a-box position="0 1.55 -0.1" width="1.5" height="0.95" depth="0.08" material="color: #141a2b; roughness: 0.8"></a-box>
+          <a-entity canvas-label="text: ⧉ IFRAME; width: 1.2; color: #c9bcff; size: 90" position="0 1.6 -0.05"></a-entity>
+          <a-entity ui-button="label: Web · YouTube; color: #6a50ee; icon: ⧉; width: 0.75" iframe-control="action: open; dialog: #iframeDialog; screen: #webScreen; src: https://aframe.io/docs/1.7.0/introduction/; title: A-Frame docs" position="-0.38 1.12 0.24"></a-entity>
+          <a-entity ui-button="label: View info; color: #6a50ee" info-toggle="#p-iframe" position="0.38 1.12 0.24"></a-entity>
+          <a-entity id="p-iframe" canvas-panel="id: iframe; width: 2.5" popup position="0 2.8 0.4"></a-entity>
+        </a-entity>
+        <!-- Iframe dialog: the screen is a 3D plane; html-iframe glues a real <iframe> on top (CSS3D) -->
+        <a-entity id="iframeDialog" popup position="0 1.95 -0.2" iframe-dialog="screen: #webScreen"
+                  dialog-frame="title: <iframe> in 3D · web page and YouTube; subtitle: CSS3D: real DOM aligned with the 3D camera (scroll and click it); credits: aframe.io docs · YouTube: Big Buck Bunny, Blender Foundation (CC BY 3.0)">
+          <a-entity id="webScreen" html-iframe="width: 2.6; height: 1.4625; pxWidth: 1024"></a-entity>
+          <a-entity ui-button="label: Website; color: #6a50ee; icon: ⧉" iframe-control="screen: #webScreen; src: https://aframe.io/docs/1.7.0/introduction/; title: A-Frame docs" position="-0.85 -0.95 0.01"></a-entity>
+          <a-entity ui-button="label: YouTube; color: #d62f2f; icon: ▶" iframe-control="screen: #webScreen; src: https://www.youtube-nocookie.com/embed/YE7VzlLtp-4?rel=0; title: YouTube" position="0 -0.95 0.01"></a-entity>
+          <a-entity ui-button="label: Close; color: #3a3f55; icon: ✕" iframe-control="action: close; dialog: #iframeDialog; screen: #webScreen" position="0.85 -0.95 0.01"></a-entity>
+        </a-entity>
+
+        <!-- Video kiosk (back left): opens a 3D dialog with <a-video> -->
+        <a-entity position="-3.3 0 -4.9" rotation="0 20 0">
+          <a-box position="0 0.5 0" width="1.5" height="1" depth="0.45" material="color: #2a3042; roughness: 0.6"></a-box>
+          <a-box position="0 1.55 -0.1" width="1.5" height="0.95" depth="0.08" material="color: #141a2b; roughness: 0.8"></a-box>
+          <a-entity canvas-label="text: ▶ VIDEO; width: 1.2; color: #c9bcff; size: 90" position="0 1.6 -0.05"></a-entity>
+          <a-entity ui-button="label: Watch video; color: #6a50ee; icon: ▶; width: 0.75" video-control="video: #trailer; action: open; dialog: #videoDialog" position="-0.38 1.12 0.24"></a-entity>
+          <a-entity ui-button="label: View info; color: #6a50ee" info-toggle="#p-video" position="0.38 1.12 0.24"></a-entity>
+          <a-entity id="p-video" canvas-panel="id: video; width: 2.4" popup position="0 2.75 0.4"></a-entity>
+        </a-entity>
+        <!-- The dialog: frame + <a-video> + controls (a popup, like the info panels) -->
+        <a-entity id="videoDialog" popup position="0 1.95 -0.2" video-dialog="video: #trailer"
+                  dialog-frame="title: Big Buck Bunny · trailer; subtitle: <video> element + <a-video> = THREE.VideoTexture on a plane; credits: (c) 2008 Blender Foundation · peach.blender.org · CC BY 3.0">
+          <a-video src="#trailer" width="2.6" height="1.4625" position="0 0 0.005"></a-video>
+          <a-entity ui-button="label: Play; color: #6a50ee; icon: ▶" video-control="video: #trailer; action: toggle" position="-0.85 -1.0 0.01"></a-entity>
+          <a-entity ui-button="label: Restart; color: #6a50ee; icon: ↺" video-control="video: #trailer; action: restart" position="0 -1.0 0.01"></a-entity>
+          <a-entity ui-button="label: Close; color: #3a3f55; icon: ✕" video-control="video: #trailer; action: close; dialog: #videoDialog" position="0.85 -1.0 0.01"></a-entity>
+        </a-entity>
+
+        <!-- SDF text with several fonts (right) -->
+        <a-entity position="3.6 0 -1.5" rotation="0 -30 0">
+          <a-plane position="0 1.3 -0.05" width="2.4" height="1.9" material="color: #141a2b; roughness: 1"></a-plane>
+          <a-text value="a-text (MSDF)" font="exo2bold" color="#ffb400" position="-1.05 2.0 0" width="3.4"></a-text>
+          <a-text value="Roboto (default)" color="#ffffff" position="-1.05 1.7 0" width="3"></a-text>
+          <a-text value="Mozilla VR" font="mozillavr" color="#4cc9f0" position="-1.05 1.45 0" width="3"></a-text>
+          <a-text value="Monoid { code }" font="monoid" color="#addb67" position="-1.05 1.2 0" width="3"></a-text>
+          <a-text value="Kelson Sans" font="kelsonsans" color="#ef2d5e" position="-1.05 0.95 0" width="3"></a-text>
+          <a-text value="Aileron Semibold" font="aileronsemibold" color="#c792ea" position="-1.05 0.7 0" width="3"></a-text>
+          <a-entity ui-button="label: View info; color: #6a50ee" info-toggle="#p-fonts" position="0 0.2 0.1"></a-entity>
+          <a-entity id="p-fonts" canvas-panel="id: fonts; width: 2.4" popup position="0 2.75 0.5"></a-entity>
+        </a-entity>
+      </a-entity>
+
+      <!-- ============ STATION 5 · FOREST, AR AND CONCLUSION ============ -->
+      <!-- Outdoors: the museum ends at the previous doorway. forest-environment
+           generates ground, sky, hills and trees (forest.js) -->
+      <a-entity id="st5" museum-station="index: 4; name: Forest" position="0 0 -56" forest-environment>
+        <!-- Forest sun and sky light: they only turn on while you are here (station-light) -->
+        <a-entity id="sunTarget" position="0 0 -2.4"></a-entity>
+        <a-entity position="7 13 3" station-light="station: 4; intensity: 2.6"
+                  light="type: directional; color: #fff0d2; castShadow: true; target: #sunTarget; shadowCameraLeft: -9; shadowCameraRight: 9; shadowCameraTop: 9; shadowCameraBottom: -9; shadowCameraFar: 40; shadowMapWidth: 2048; shadowMapHeight: 2048; shadowBias: -0.0005"></a-entity>
+        <a-entity station-light="station: 4; intensity: 1" light="type: hemisphere; color: #cfe8ff; groundColor: #56703a"></a-entity>
+
+        <!-- Wooden sign with the title -->
+        <a-cylinder position="-2.35 1.85 -7.3" radius="0.09" height="3.7" material="color: #6b4a2f; roughness: 1" shadow="cast: true"></a-cylinder>
+        <a-cylinder position="2.35 1.85 -7.3" radius="0.09" height="3.7" material="color: #6b4a2f; roughness: 1" shadow="cast: true"></a-cylinder>
+        <a-box position="0 3.15 -7.36" width="4.75" height="1.15" depth="0.06" material="color: #5a3d26; roughness: 1"></a-box>
+        <a-entity canvas-panel="id: s5-title; width: 4.4" position="0 3.15 -7.32"></a-entity>
+
+        <!-- Fox plaque: current clip + info -->
+        <a-entity position="0 0 1.1">
+          <a-box position="0 0.2 0" width="1.0" height="0.4" depth="0.22" material="color: #5a3d26; roughness: 1"></a-box>
+          <a-entity id="foxLabel" canvas-label="text: Walk · click to change; width: 1.4; color: #ffe8c2; size: 60" position="0 0.55 0"></a-entity>
+          <a-entity ui-button="label: View info; color: #1fa9d6" info-toggle="#p-fox" position="0 0.22 0.12"></a-entity>
+          <a-entity id="p-fox" canvas-panel="id: fox; width: 2.6" popup position="0 2.4 -0.4"></a-entity>
+        </a-entity>
+
+        <!-- AR zone (left) -->
+        <a-entity position="-3.9 0 -1.2" rotation="0 30 0">
+          <a-entity canvas-panel="id: ar-intro; width: 2.2" position="0 1.75 0"></a-entity>
+          <a-entity ui-button="label: Enter AR; color: #1fa9d6; icon: AR; width: 0.8" enter-ar-button position="-0.45 0.45 0.1"></a-entity>
+          <a-entity ui-button="label: View info; color: #1fa9d6" info-toggle="#p-ar" position="0.45 0.45 0.1"></a-entity>
+          <a-entity id="p-ar" canvas-panel="id: ar; width: 2.5" popup position="0 2.2 0.5"></a-entity>
+        </a-entity>
+
+        <!-- Conclusion (right) -->
+        <a-entity position="3.9 0 -1.2" rotation="0 -30 0">
+          <a-entity canvas-panel="id: outro; width: 2.4" position="0 1.9 0"></a-entity>
+          <a-entity ui-button="label: Resources; color: #1fa9d6" info-toggle="#p-res" position="0 0.45 0.1"></a-entity>
+          <a-entity id="p-res" canvas-panel="id: res; width: 2.6" popup position="0 2.1 0.5"></a-entity>
+        </a-entity>
+      </a-entity>
+    </a-entity>
+    <!-- ================= END OF MUSEUM ================= -->
+
+    <!-- AR exhibit: an external animated glTF model (free to use, see README credits).
+         It lives outside #museum so it stays visible in AR (ar-hit-test places it on real surfaces).
+         #foxOrbit spins; the fox, 2 m from its center, walks in a circle. Click it to change clip. -->
+    <a-entity id="arExhibit" position="0 0 -58.4">
+      <a-entity id="foxOrbit" orbit="speed: 14">
+        <a-entity id="fox" gltf-model="url(vendor/models/fox.glb)"
+                  position="2 0 0" rotation="0 180 0" scale="0.009 0.009 0.009" shadow="cast: true"
+                  gltf-animation="clip: Walk; crossFade: 0.45"
+                  clip-cycler="clips: Survey, Walk, Run; speeds: 0, 14, 42; orbit: #foxOrbit; label: #foxLabel">
+          <!-- Invisible hit box: raycasting a box is cheaper and more reliable than a skinned mesh.
+               Its click events bubble up to #fox. Units are the model's (scale 0.009). -->
+          <a-box class="clickable" width="40" height="75" depth="150" position="0 38 -8" material="visible: false"></a-box>
+        </a-entity>
+      </a-entity>
+    </a-entity>
+  </a-scene>
+
+</body>
+</html>
