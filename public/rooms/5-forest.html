@@ -45,7 +45,8 @@
   <a-entity position="3.9 0 -1.2" rotation="0 -30 0">
     <a-entity canvas-panel="id: outro; width: 2.4" position="0 1.9 0"></a-entity>
     <a-entity ui-button="label: Resources; color: #1fa9d6" info-toggle="#p-res" position="0 0.45 0.1"></a-entity>
-    <a-entity id="p-res" canvas-panel="id: res; width: 2.6" popup position="0 2.1 0.5"></a-entity>
+    <!-- link-list: one clickable row per PANELS.res.links entry, below the panel -->
+    <a-entity id="p-res" canvas-panel="id: res; width: 2.6" link-list="id: res" popup position="0 2.75 0.5"></a-entity>
   </a-entity>
 </a-entity>
 

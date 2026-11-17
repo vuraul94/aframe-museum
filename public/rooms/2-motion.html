@@ -24,11 +24,14 @@
              animation__rot="property: rotation; to: 0 360 0; loop: true; dur: 3000; easing: linear"
              animation__scale="property: scale; to: 1.4 1.4 1.4; dir: alternate; loop: true; dur: 1200; easing: easeInOutSine"
              animation__color="property: material.color; type: color; to: #4cc9f0; dir: alternate; loop: true; dur: 1200; easing: easeInOutSine"></a-torus>
-    <a-entity ui-button="label: View info; color: #e09e00" info-toggle="#p-anim" position="-0.4 0.35 1.38"></a-entity>
+    <a-entity ui-button="label: View info; color: #e09e00; width: 0.62" info-toggle="#p-anim" position="-0.68 0.35 1.38"></a-entity>
     <!-- External (non-native) models and animations: glTF, Mixamo, AnimationMixer -->
-    <a-entity ui-button="label: External; color: #e09e00; icon: ⇩" info-toggle="#p-ext" position="0.4 0.35 1.38"></a-entity>
+    <a-entity ui-button="label: External; color: #e09e00; icon: ⇩; width: 0.62" info-toggle="#p-ext" position="0 0.35 1.38"></a-entity>
+    <!-- How to export an animation from Blender to glTF for A-Frame -->
+    <a-entity ui-button="label: Blender; color: #e87d0d; icon: B; width: 0.62" info-toggle="#p-blender" position="0.68 0.35 1.38"></a-entity>
     <a-entity id="p-anim" canvas-panel="id: anim; width: 2.4" popup position="0 2.6 0.5"></a-entity>
     <a-entity id="p-ext" canvas-panel="id: anim-external; width: 2.6" popup position="0 2.6 0.55"></a-entity>
+    <a-entity id="p-blender" canvas-panel="id: blender-export; width: 2.7" popup position="0 2.65 0.6"></a-entity>
   </a-entity>
 
   <!-- Lights and shadows (center) -->

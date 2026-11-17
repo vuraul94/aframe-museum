@@ -172,6 +172,8 @@ AFRAME.registerComponent('forest-environment', {
     const cloudMat = new THREE.SpriteMaterial({ map: makeCanvasTexture(cc), depthWrite: false, fog: false, opacity: 0.9 });
     for (let i = 0; i < 10; i++) {
       const s = new THREE.Sprite(cloudMat);
+      // Decorative: never raycast (Sprite.raycast also needs raycaster.camera, which A-Frame's raycaster does not set)
+      s.raycast = () => {};
       const a = this.random() * Math.PI * 2, r = 45 + this.random() * 25;
       s.position.set(Math.cos(a) * r, 22 + this.random() * 14, this.data.center.y + Math.sin(a) * r);
       const k = 14 + this.random() * 12;

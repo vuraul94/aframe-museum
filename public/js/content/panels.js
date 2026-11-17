@@ -125,7 +125,7 @@ export const PANELS = {
       'Engine based on anime.js built into A-Frame: animates any property of any component.',
       '• Multiple animations per entity: animation__name',
       '• easing, loop, dir: alternate, startEvents…',
-      'Skeletal animations made in other tools? Press "External".'
+      'Skeletal animations made in other tools? Press "External" and "Blender".'
     ],
     code: [
       '<a-sphere animation="property: position;',
@@ -158,6 +158,25 @@ export const PANELS = {
       'const mixer = new THREE.AnimationMixer(model);',
       'mixer.clipAction(model.animations[0]).play();',
       'tick(t, dt) { mixer.update(dt / 1000); }'
+    ]
+  },
+  'blender-export': {
+    kicker: 'Blender → glTF → A-Frame', accent: '#e87d0d', title: 'Exporting an animation from Blender',
+    body: [
+      '1. Animate with keyframes: objects, an armature (bones + skinning) or shape keys. Each animation is an Action: give it a clear name (Walk, Run) and push it to the NLA (or mark it Fake User) so it is not lost.',
+      '2. Bake what glTF cannot store (constraints, drivers, physics, IK): Object › Animation › Bake Action, with Visual Keying.',
+      '3. Apply scale (Ctrl+A). 1 Blender unit = 1 m = 1 A-Frame unit; keep +Y Up.',
+      '4. File › Export › glTF 2.0: format glTF Binary (.glb), Animation on, mode "Actions" (one clip per action) or "NLA Tracks". Optional: Draco compression.',
+      '5. Check it in a glTF viewer (gltf.report), then load it in A-Frame and play the clips by name.'
+    ],
+    code: [
+      '<a-entity gltf-model="url(walk.glb)"',
+      '  animation-mixer="clip: Walk"></a-entity>',
+      '<!-- or this museum: gltf-animation="clip: Walk" -->',
+      '',
+      '<!-- only if exported with Draco: -->',
+      '<a-scene gltf-model="dracoDecoderPath:',
+      '  https://www.gstatic.com/draco/versioned/decoders/1.5.7/">'
     ]
   },
   light: {
@@ -405,14 +424,22 @@ export const PANELS = {
   res: {
     kicker: 'Resources', accent: A5, title: 'Keep learning',
     body: [
-      '• aframe.io/docs — official documentation',
-      '• aframe.io/examples — examples',
-      '• github.com/aframevr/aframe-inspector — Inspector',
-      '• github.com/aframevr/aframe — source code',
-      '• immersive-web.github.io/webxr — WebXR specification',
-      '• github.com/c-frame/aframe-extras — animation-mixer',
-      '• mixamo.com · sketchfab.com · poly.pizza — models',
+      'Click a link to open it in a new tab.',
       'Credits: Fox (Khronos glTF Sample Assets, CC0 / CC BY 4.0) · Big Buck Bunny (Blender Foundation, CC BY 3.0)'
+    ],
+    // Rendered as clickable rows by the link-list component
+    links: [
+      { label: 'A-Frame documentation', url: 'https://aframe.io/docs/' },
+      { label: 'A-Frame examples', url: 'https://aframe.io/examples/' },
+      { label: 'A-Frame Inspector', url: 'https://github.com/aframevr/aframe-inspector' },
+      { label: 'A-Frame source code', url: 'https://github.com/aframevr/aframe' },
+      { label: 'WebXR specification', url: 'https://immersive-web.github.io/webxr/' },
+      { label: 'aframe-extras (animation-mixer)', url: 'https://github.com/c-frame/aframe-extras' },
+      { label: 'glTF exporter in Blender', url: 'https://docs.blender.org/manual/en/latest/addons/import_export/scene_gltf2.html' },
+      { label: 'Mixamo: characters and animations', url: 'https://www.mixamo.com/' },
+      { label: 'Sketchfab: 3D models', url: 'https://sketchfab.com/' },
+      { label: 'Poly Pizza: low-poly models', url: 'https://poly.pizza/' },
+      { label: 'This museum on GitHub', url: 'https://github.com/vuraul94/aframe-museum' }
     ]
   }
 };

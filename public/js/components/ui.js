@@ -1,11 +1,11 @@
 /**
  * 3D UI components: text panels, labels, buttons
- * and "View info" panel pop-ups.
+ * "View info" panel pop-ups and clickable link lists.
  */
 import { PANELS } from '../content/panels.js';
 import { FONT_UI } from '../config.js';
 import { paintPanel, roundRectPath, makeCanvasTexture } from '../lib/canvas.js';
-import { togglePanel, MuseumLog } from '../core/feedback.js';
+import { togglePanel, MuseumLog, toast } from '../core/feedback.js';
 
 const CANVAS_W = 1024;
 // alphaTest: fully transparent pixels write no depth (no "holes" behind other panels)
@@ -122,5 +122,77 @@ AFRAME.registerComponent('info-toggle', {
       const open = togglePanel(this.data);
       MuseumLog.add('click', `View info (${open ? 'open' : 'close'})`, e);
     });
+  }
+});
+
+/**
+ * Clickable links under a canvas-panel: one 3D row per PANELS[id].links item.
+ * A click opens the URL in a new tab (outside XR: a headset session would
+ * have to end first, so there we only show a hint).
+ */
+AFRAME.registerComponent('link-list', {
+  dependencies: ['canvas-panel'],
+  schema: { id: { type: 'string' }, rowHeight: { default: 0.17 }, gap: { default: 0.025 } },
+
+  init() {
+    const p = PANELS[this.data.id] || {};
+    const panel = this.el.getObject3D('mesh');
+    const width = this.el.getAttribute('canvas-panel').width;
+    let y = -panel.geometry.parameters.height / 2 - this.data.gap - this.data.rowHeight / 2;
+    for (const link of p.links || []) {
+      const row = document.createElement('a-entity');
+      row.setAttribute('link-row', { label: link.label, url: link.url, width, height: this.data.rowHeight, accent: p.accent || '#4cc9f0' });
+      row.setAttribute('position', `0 ${y} 0.005`);
+      this.el.appendChild(row);
+      y -= this.data.rowHeight + this.data.gap;
+    }
+  }
+});
+
+/** One link: label + host, hover highlight, opens the URL on click */
+AFRAME.registerComponent('link-row', {
+  schema: { label: { default: '' }, url: { default: '' }, width: { default: 2.6 }, height: { default: 0.17 }, accent: { default: '#4cc9f0' } },
+
+  init() {
+    const { width, height } = this.data;
+    this.canvas = document.createElement('canvas');
+    this.canvas.width = CANVAS_W; this.canvas.height = Math.round(CANVAS_W * height / width);
+    this.texture = makeCanvasTexture(this.canvas);
+    this.el.setObject3D('mesh', new THREE.Mesh(new THREE.PlaneGeometry(width, height), basicMaterial(this.texture)));
+    this.el.classList.add('clickable');
+    this.el.addEventListener('mouseenter', () => { this.hover = true; this.draw(); });
+    this.el.addEventListener('mouseleave', () => { this.hover = false; this.draw(); });
+    this.el.addEventListener('click', e => this.open(e));
+    this.draw();
+  },
+
+  draw() {
+    const { label, url, accent } = this.data;
+    const c = this.canvas, ctx = c.getContext('2d'), W = c.width, H = c.height;
+    ctx.clearRect(0, 0, W, H);
+    roundRectPath(ctx, 3, 3, W - 6, H - 6, 18);
+    ctx.fillStyle = this.hover ? '#26314f' : 'rgba(17, 22, 36, 0.94)'; ctx.fill();
+    ctx.lineWidth = 3; ctx.strokeStyle = this.hover ? accent : 'rgba(255,255,255,0.12)'; ctx.stroke();
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = accent; ctx.font = `700 ${Math.round(H * 0.42)}px ${FONT_UI}`;
+    ctx.fillText('↗', 22, H / 2);
+    ctx.fillStyle = this.hover ? '#ffffff' : '#e3e8f5'; ctx.font = `600 ${Math.round(H * 0.36)}px ${FONT_UI}`;
+    ctx.fillText(label, 70, H / 2, W * 0.55);
+    ctx.textAlign = 'right'; ctx.fillStyle = '#8f9bbb'; ctx.font = `500 ${Math.round(H * 0.28)}px ${FONT_UI}`;
+    ctx.fillText(url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''), W - 24, H / 2, W * 0.36);
+    ctx.textAlign = 'left';
+    this.texture.needsUpdate = true;
+  },
+
+  open(e) {
+    // Ignore clicks while the pop-up is closed (scaled down / hidden)
+    for (let o = this.el.object3D; o; o = o.parent) if (!o.visible || o.scale.x < 0.2) return;
+    const scene = this.el.sceneEl;
+    if (scene.is('vr-mode') || scene.is('ar-mode')) {
+      toast('Exit VR/AR to open links');
+      return;
+    }
+    window.open(this.data.url, '_blank', 'noopener');
+    MuseumLog.add('click', `open ${this.data.label}`, e);
   }
 });
