@@ -65,6 +65,17 @@ AFRAME.registerSystem('museum', {
     this.sceneEl.emit('station-changed', { index: i, name: next.name });
   },
 
+  /**
+   * One scene: the visitor walked through a doorway into room i (room-bounds).
+   * Same bookkeeping as goTo, without moving the rig.
+   */
+  enterRoom(i) {
+    if (i === this.current || !this.stations[i]) return;
+    this.stations[this.current]?.el.querySelectorAll('[popup]').forEach(p => togglePanel(p, false));
+    this.current = i;
+    this.sceneEl.emit('station-changed', { index: i, name: this.stations[i].name });
+  },
+
   next() { this.goTo(this.current + 1); },
   prev() { this.goTo(this.current - 1); },
 

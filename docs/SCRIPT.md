@@ -27,4 +27,4 @@ Click **⇄ Scene per room** in the HUD: the same room reopens as its own page a
 - **Short on time:** in Setup show only the center scene; skip the video (only mention it) and the External panel; skip ahead with **N** / **PageDown** (presentation clickers send PageDown/PageUp).
 - **The fox ran off-screen:** click it until it shows **Survey** (it stands still).
 - **From a VR headset:** **A/X** buttons = next room, **B/Y** = previous; left stick to walk, right stick to turn.
-- **Walls:** you cannot walk out of a room (WASD, thumbstick or walking with a headset); change rooms with the keys, the HUD or A/X · B/Y.
+- **Walls:** you cannot walk through walls (WASD, thumbstick or walking with a headset). In the one-scene version you can walk through the doorways; in the scene-per-room version change rooms with the keys, the HUD or A/X · B/Y.
