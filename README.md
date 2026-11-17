@@ -69,7 +69,8 @@ public/
     components/
       ui.js              canvas-panel, canvas-label, ui-button, popup, info-toggle, link-list
       setup.js           scene-toggle (switches <a-scene> components live)
-      bounds.js          room-bounds: the camera cannot leave the current room
+      bounds.js          room-bounds: walls the camera cannot cross (doorways open in one scene)
+      streaming.js       room-streamer: mounts near rooms, unmounts and disposes far ones
       ecs-demo.js        spin, bob, color-cycle, ecs-toggle, ecs-inspector, pbr-grid
       materials.js       canvas-texture, plasma-texture, svg-texture, PMREM environment, lights
       interaction.js     interactive-exhibit (mouseenter / mouseleave / click)
@@ -99,6 +100,8 @@ public/
 **Iframes (web page and YouTube):** WebGL cannot draw an `<iframe>` (cross-origin DOM). `html-iframe` uses the Three.js CSS3DRenderer technique: a DOM layer over the canvas with the camera's `perspective` and `matrix3d`, so a real, clickable iframe sits on a 3D plane. Limits: 3D objects cannot cover it, headsets don't show DOM in VR/AR (the plane shows a notice), and sites can forbid framing (`X-Frame-Options` / CSP `frame-ancestors`; aframe.io allows it). YouTube uses the `youtube-nocookie.com/embed/ID` URL; the iframe only loads when the dialog opens and is unloaded on close (stops the audio). Both need internet.
 
 **External models and animations:** A-Frame loads glTF/GLB natively (`gltf-model`) and `obj-model`; other formats (FBX, USDZ…) need a Three.js loader inside a component. The animation clips in a glTF are not played automatically: use `animation-mixer` from [aframe-extras](https://github.com/c-frame/aframe-extras) or a `THREE.AnimationMixer` (this project's `gltf-animation`). For characters, Mixamo (rig + mocap) → FBX → Blender → export `.glb`, and compress with `gltf-transform` (Draco / Meshopt). The **Blender** panel in room 2 walks through exporting an animation: named Actions, baking constraints/drivers, applying scale, then File › Export › glTF 2.0 with Animation on (mode "Actions" = one clip per action). Raycasting skinned meshes is unreliable and costly, so the fox has an invisible hit box for clicks.
+
+**Streaming (memory):** in the one-scene version only the rooms near the visitor are in the scene. `museum-loader.js` mounts each room's anchor (the `museum-station` entity, so navigation and walls work) and keeps its content as a template; `room-streamer` (on `<a-scene>`) mounts a room when its nearest edge is within reach and unmounts it when it leaves, disposing its geometries, materials and textures. Reach is `fog.far` when there is fog (what the fog hides is not loaded at all) and one room (`radius`) otherwise. On start only rooms 1–2 are loaded (28 textures / 51 geometries instead of 78 / 138 with everything). Trade-offs: an unloaded room loses its state (open panels, toggled components) and loading a room costs a short hitch. The AR fox (`data-mount="scene"`) is always mounted because scene components reference it at start-up. The scene-per-room version already loads one room only.
 
 **Walls:** `room-bounds` (on `#rig`) stops the camera at the walls. Every frame it checks the camera's world position and pushes the rig back if that spot is not walkable, so it works with WASD, the VR thumbstick and real walking with a headset; moves are resolved per axis, so you slide along walls. In the one-scene version you can walk from room to room through the doorways (each room's side limits come from its `museum-station` `bounds`, default ±6.5 m, the forest is wider) and the room you walk into becomes the current one. In the scene-per-room version each room is closed. It pauses while teleporting between rooms and in AR.
 

@@ -265,6 +265,9 @@ AFRAME.registerComponent('station-light', {
     };
     this.el.setAttribute('light', 'intensity', 0);
     this.el.sceneEl.addEventListener('station-changed', this.onChange);
+    // Streamed in after you arrived (room-streamer): turn on now
+    const museum = this.el.sceneEl.systems.museum;
+    if (museum && museum.current === this.station) this.onChange({ detail: { index: museum.current } });
   },
   remove() {
     this.el.sceneEl.removeEventListener('station-changed', this.onChange);

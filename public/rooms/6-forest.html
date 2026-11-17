@@ -10,9 +10,11 @@
 -->
 
 <!-- ============ STATION 5 · FOREST, AR AND CONCLUSION ============ -->
-<!-- Outdoors: the museum ends at the previous doorway. forest-environment
-     generates ground, sky, hills and trees (forest.js) -->
-<a-entity id="st5" museum-station="index: 5; name: Forest; bounds: -14, 14, -16, 6.4" position="0 0 -70" forest-environment>
+<!-- Outdoors: the museum ends at the previous doorway -->
+<a-entity id="st5" museum-station="index: 5; name: Forest; bounds: -14, 14, -16, 6.4" position="0 0 -70">
+  <!-- Ground, sky, hills and trees generated in code (forest.js). A child, not on the
+       station itself, so it is streamed in and out with the rest of the room -->
+  <a-entity forest-environment></a-entity>
   <!-- Forest sun and sky light: they only turn on while you are here (station-light) -->
   <a-entity id="sunTarget" position="0 0 -2.4"></a-entity>
   <a-entity position="7 13 3" station-light="intensity: 2.6"

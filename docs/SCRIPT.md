@@ -17,7 +17,7 @@
 
 ## Bonus (if there is time or a question about performance): one scene vs one scene per room
 
-Click **⇄ Scene per room** in the HUD: the same room reopens as its own page and `<a-scene>`. Press **N**: the next room is a new page load. Key idea: one big scene = instant teleports but everything in memory; one scene per room = lighter on GPU/memory and faster first load, but each change reloads (and ends a VR session). Each room is its own file (`public/rooms/*.html`): `index.html` mounts all of them in one scene, `room.html` mounts one. **⇄ One scene** goes back.
+Click **⇄ Scene per room** in the HUD: the same room reopens as its own page and `<a-scene>`. Press **N**: the next room is a new page load. Key idea: one big scene = instant teleports but everything in memory; one scene per room = lighter on GPU/memory and faster first load, but each change reloads (and ends a VR session). Each room is its own file (`public/rooms/*.html`): `index.html` mounts all of them in one scene, `room.html` mounts one. **⇄ One scene** goes back. Also worth a sentence: the one-scene version streams rooms anyway (only the nearby ones are mounted; with fog on, nothing the fog hides is loaded). Turn **stats** on in room 1 and watch Textures/Geometries change as you move.
 
 ## Plan B
 

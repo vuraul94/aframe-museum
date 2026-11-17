@@ -70,7 +70,7 @@ export const PANELS = {
       '• background, fog, shadow, stats',
       '• webxr + xr-mode-ui: XR features and the VR/AR buttons',
       '• inspector, loading-screen, embedded (inside a page layout)',
-      'Try fog and stats: they switch on live.'
+      'Try fog and stats: they switch on live. With fog on, rooms hidden by it are not even loaded (watch Textures in stats).'
     ],
     code: [
       '<a-scene',

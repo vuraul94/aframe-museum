@@ -81,27 +81,33 @@ AFRAME.registerComponent('clip-cycler', {
     speeds: { type: 'array', default: ['0', '14', '42'] },
     start: { default: 1 },
     orbit: { type: 'selector' },
-    label: { type: 'selector' }
+    label: { type: 'string' }   // selector, resolved on use: the label's room may be loaded later
   },
 
   init() {
     this.i = this.data.start;
     this.el.classList.add('clickable');
     this.apply();
+    // The label's room was (re)loaded by room-streamer: show the current clip again
+    this.el.sceneEl.addEventListener('room-loaded', () => this.apply());
     this.el.addEventListener('click', e => {
       this.i = (this.i + 1) % this.data.clips.length;
       this.apply();
       MuseumLog.add('click', `fox → ${this.data.clips[this.i]}`, e);
     });
     // Subtle hover feedback: the label grows
-    this.el.addEventListener('mouseenter', () => this.data.label?.object3D.scale.setScalar(1.15));
-    this.el.addEventListener('mouseleave', () => this.data.label?.object3D.scale.setScalar(1));
+    this.el.addEventListener('mouseenter', () => this.label()?.object3D.scale.setScalar(1.15));
+    this.el.addEventListener('mouseleave', () => this.label()?.object3D.scale.setScalar(1));
   },
 
   apply() {
     const clip = this.data.clips[this.i];
     this.el.setAttribute('gltf-animation', 'clip', clip);
     this.data.orbit?.setAttribute('orbit', 'speed', Number(this.data.speeds[this.i]) || 0);
-    this.data.label?.setAttribute('canvas-label', 'text', `${clip} · click to change`);
+    this.label()?.setAttribute('canvas-label', 'text', `${clip} · click to change`);
+  },
+
+  label() {
+    return this.data.label ? document.querySelector(this.data.label) : null;
   }
 });

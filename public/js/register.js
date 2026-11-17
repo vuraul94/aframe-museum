@@ -24,5 +24,6 @@ import './components/models.js';
 import './components/forest.js';
 import './components/xr.js';
 import './components/bounds.js';
+import './components/streaming.js';
 import './components/inspector.js';
 import './components/architecture.js';

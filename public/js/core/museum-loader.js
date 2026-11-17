@@ -11,10 +11,21 @@
  * The scene lives in a <template> so A-Frame does not start it before the
  * rooms are in place (selectors like ar-hit-test="target: #arExhibit" must
  * resolve when the components initialize).
+ *
+ * Streaming (one scene): only each room's anchor is mounted up front (the
+ * museum-station entity, so navigation and walls work). Its content stays
+ * here, in ROOM_CONTENT, and the room-streamer component mounts / unmounts it
+ * when the visitor gets near / far. data-mount="scene" elements (the AR fox)
+ * are always mounted: scene components reference them at start-up.
  */
 import { ROOM_FILES, STATIONS } from '../config.js';
 
 const FOREST = STATIONS - 1;
+
+/** Streamed content per room index: { root, children: Node[], extras: [{ target, node }] } */
+export const ROOM_CONTENT = [];
+
+const stationIndex = el => +(/index:\s*(\d+)/.exec(el.getAttribute('museum-station') || '') || [])[1];
 
 /** The shell: this document (index.html) or the downloaded index.html (room.html) */
 async function getShell() {
@@ -31,7 +42,7 @@ async function fetchRoom(i) {
   return tpl.content;
 }
 
-export async function mountMuseum(rooms, { room = -1 } = {}) {
+export async function mountMuseum(rooms, { room = -1, stream = false } = {}) {
   const [{ doc, external }, ...fragments] = await Promise.all([getShell(), ...rooms.map(fetchRoom)]);
 
   // room.html: copy the HUD, help and toast from the shell
@@ -46,11 +57,24 @@ export async function mountMuseum(rooms, { room = -1 } = {}) {
 
   // Each room: top-level elements go to #museum, the scene root or <body> (data-mount)
   for (const fragment of fragments) {
-    for (const el of [...fragment.children]) {
-      const target = { scene, body: document.body }[el.dataset.mount] || museum;
-      target.appendChild(document.importNode(el, true));
+    const top = [...fragment.children];
+    const station = top.find(el => el.hasAttribute('museum-station'));
+    const content = stream && station && { children: [], extras: [] };
+    for (const el of top) {
+      const where = el.dataset.mount;
+      const target = { scene, body: document.body }[where] || museum;
+      if (!content || where === 'scene') { target.appendChild(document.importNode(el, true)); continue; }
+      if (el === station) {
+        // Mount just the anchor (no children); keep the children as a template
+        content.root = target.appendChild(document.importNode(el.cloneNode(false), true));
+        content.children = [...el.childNodes];
+      } else {
+        content.extras.push({ target, node: el });
+      }
     }
+    if (content) ROOM_CONTENT[stationIndex(station)] = content;
   }
+  if (stream) scene.setAttribute('room-streamer', '');
 
   if (room >= 0) {
     // One scene per room: the museum system navigates by loading pages,
