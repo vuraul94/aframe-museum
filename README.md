@@ -28,7 +28,7 @@ npm run vendor
 |---|---|
 | `npm start` | Static server on `:8080` (set `PORT` to change it) + Inspector save service on `localhost:51234` (`SAVE=0` to disable) |
 | `npm run dev` | Same, but restarts when `server/` changes |
-| `npm run vendor` | Downloads A-Frame, the Inspector, MSDF fonts, the fox model and the video into `./vendor` (offline mode) |
+| `npm run vendor` | Downloads A-Frame, the Inspector and MSDF fonts into `./vendor` (offline mode) |
 | `npm run build` | Static version in `./dist` (public + vendor cache) for GitHub Pages or any static host |
 | `npm run cert` | Generates a self-signed certificate in `./certs`; the server switches to HTTPS automatically |
 
@@ -84,7 +84,7 @@ public/
       procedural.js      Noise, seeded random, patterns (grass, dirt…), SVG and WAV synthesis
 ```
 
-**How the libraries are served:** `index.html` loads `/vendor/aframe.min.js` and sets `window.AFRAME_CDN_ROOT = '/vendor/cdn/'`. The server resolves those paths by downloading once from the official CDNs (aframe.io, jsdelivr and cdn.aframe.io) and saving the file in `./vendor`. That way the `a-text` fonts, the VR controller models and the Inspector also work offline. Versions live in `server/vendor.js` (A-Frame 1.7.1, Inspector 1.7.0). The same mechanism serves the two external assets (`/vendor/models/fox.glb` and `/vendor/media/big-buck-bunny-trailer.m4v`); static and vendor files support HTTP `Range` requests so `<video>` can seek and loop.
+**How the libraries are served:** `index.html` loads `vendor/aframe.min.js` and sets `window.AFRAME_CDN_ROOT = 'vendor/cdn/'` (relative paths, so the site also works under `/<repo>/`). The server resolves those paths by downloading once from the official CDNs (aframe.io, jsdelivr and cdn.aframe.io) and saving the file in `./vendor`. That way the `a-text` fonts, the VR controller models and the Inspector also work offline. Versions live in `server/vendor.js` (A-Frame 1.7.1, Inspector 1.7.0). The museum's own external assets (the fox and the trailer) are committed in [`public/assets/`](public/assets/CREDITS.md) with their licenses; the server supports HTTP `Range` requests so `<video>` can seek and loop.
 
 **Saving Inspector edits:** the Inspector keeps changes in memory. To keep them you can:
 1. Copy: "Copy entity HTML to clipboard" in the entity panel, then paste into `index.html`.
@@ -149,7 +149,7 @@ WebXR requires HTTPS outside `localhost`. There are two options:
 
 ## Credits and licenses
 
-Everything is generated in code except two free-to-use external assets, downloaded on first use:
+Everything is generated in code except two free-to-use external assets, included in `public/assets/` (see [CREDITS.md](public/assets/CREDITS.md)):
 
 - **Fox** (`fox.glb`) from the [Khronos glTF Sample Assets](https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/Fox): model by PixelMannen ([CC0](https://creativecommons.org/publicdomain/zero/1.0/)), rigging and animation by tomkranis ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)), glTF conversion by AsoboStudio and scurest ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)).
 - **Big Buck Bunny trailer**: (c) 2008 Blender Foundation, [peach.blender.org](https://peach.blender.org) ([CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)). The `.webm` fallback is the VP9 transcode from [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Big_Buck_Bunny_Trailer_400p.ogv). The YouTube iframe shows Blender's official upload.

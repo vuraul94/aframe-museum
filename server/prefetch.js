@@ -9,7 +9,7 @@ const FONTS = [
   'KelsonSans.fnt', 'Aileron-Semibold.fnt'
 ];
 
-// Libraries, the fox model and the trailer video
+// Libraries
 for (const p of Object.keys(FILES)) await fetchToCache(resolveVendor(p));
 
 for (const font of FONTS) {
@@ -19,5 +19,5 @@ for (const font of FONTS) {
   await fetchToCache(resolveVendor(`/vendor/cdn/fonts/${atlas}`));
 }
 
-console.log('\n  ✔ Libraries, fonts, model and video cached in ./vendor (offline mode ready).');
+console.log('\n  ✔ Libraries and fonts cached in ./vendor (offline mode ready).');
 console.log('  ℹ  VR controller 3D models are cached the first time they are used.\n');

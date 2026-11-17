@@ -21,7 +21,7 @@ Click **⇄ Scene per room** in the HUD: the same room reopens as its own page a
 ## Plan B
 
 - **Online backup:** the GitHub Pages copy of the museum (same content, no Inspector save service).
-- **No internet:** run `npm run vendor` before the talk; A-Frame, the Inspector, the fonts, the fox model and the video end up in `./vendor`.
+- **No internet:** run `npm run vendor` before the talk; A-Frame, the Inspector and the fonts end up in `./vendor` (the fox and the video are already in the repo).
 - **No internet at the venue:** the iframe kiosk (web and YouTube) is the only part that needs it; skip it.
 - **Short on time:** skip the video (only mention it) and the External panel; skip ahead with **N** / **PageDown** (presentation clickers send PageDown/PageUp).
 - **The fox ran off-screen:** click it until it shows **Survey** (it stands still).

@@ -62,11 +62,11 @@ AFRAME.registerComponent('video-dialog', {
     v.addEventListener('pause', () => { if (!v.ended && v.readyState >= 2) this.setStatus('❚❚  Paused', '#ffffff'); });
     // With <source> children the error fires on the last <source>, not on <video>
     const onError = () => this.setStatus('Could not load the video', '#ff6b6b',
-      'Check the server log and run `npm run vendor`. Formats tried: ' + sources.map(s => s.type.split(';')[0]).join(', '));
+      'Check the server log (404?). Formats tried: ' + sources.map(s => s.type.split(';')[0]).join(', '));
     (sources.at(-1) || v).addEventListener('error', onError);
     if (v.error) onError(); else onProgress();
     // Nothing after 8 s → say so instead of a silent black square
-    setTimeout(() => { if (v.readyState < 2 && !v.error) this.setStatus('Still loading…', '#ffd166', 'Is `npm start` running? Is the file in ./vendor/media?'); }, 8000);
+    setTimeout(() => { if (v.readyState < 2 && !v.error) this.setStatus('Still loading…', '#ffd166', 'Is the server running? Is the file in assets/media?'); }, 8000);
   },
 
   /** Draws (or hides, with null) the status message over the video */

@@ -14,19 +14,12 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const VENDOR_DIR = path.join(ROOT, 'vendor');
 
 /**
- * Files with a fixed name. Besides the libraries, the two external
- * (non-native) assets of the museum, both free to use:
- *  - Fox.glb: Khronos glTF Sample Assets. Model by PixelMannen (CC0), rigging and
- *    animation by tomkranis (CC BY 4.0), glTF conversion by AsoboStudio & scurest (CC BY 4.0).
- *  - Big Buck Bunny trailer: (c) 2008 Blender Foundation, peach.blender.org (CC BY 3.0).
+ * Libraries with a fixed name. (The museum's own external assets, the fox
+ * and the trailer, are committed in public/assets/: see its CREDITS.md.)
  */
 export const FILES = {
   '/vendor/aframe.min.js': `https://aframe.io/releases/${AFRAME_VERSION}/aframe.min.js`,
-  '/vendor/aframe-inspector.min.js': `https://cdn.jsdelivr.net/npm/aframe-inspector@${INSPECTOR_VERSION}/dist/aframe-inspector.min.js`,
-  '/vendor/models/fox.glb': 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/Fox/glTF-Binary/Fox.glb',
-  '/vendor/media/big-buck-bunny-trailer.m4v': 'https://download.blender.org/peach/trailer/trailer_iphone.m4v',
-  // Fallback for browsers without H.264 (e.g. some Linux builds): VP9 transcode from Wikimedia Commons
-  '/vendor/media/big-buck-bunny-trailer.webm': 'https://upload.wikimedia.org/wikipedia/commons/transcoded/b/b3/Big_Buck_Bunny_Trailer_400p.ogv/Big_Buck_Bunny_Trailer_400p.ogv.240p.vp9.webm'
+  '/vendor/aframe-inspector.min.js': `https://cdn.jsdelivr.net/npm/aframe-inspector@${INSPECTOR_VERSION}/dist/aframe-inspector.min.js`
 };
 
 /** Prefix that replaces https://cdn.aframe.io/ (see window.AFRAME_CDN_ROOT in index.html) */
