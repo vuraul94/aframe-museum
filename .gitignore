@@ -2,6 +2,6 @@ node_modules/
 vendor/
 certs/
 *.log
-public/index.html.bak
+*.bak
 dist/
 .claude/

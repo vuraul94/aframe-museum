@@ -86,7 +86,7 @@ export const PANELS = {
       'Inspector changes are in memory only: reloading the page loses them. Three ways to keep them:',
       '• Copy: "Copy entity HTML to clipboard" (entity panel) → paste it into index.html.',
       '• Export: "Export to GLTF" (scene or entity) → a .glb you can load with gltf-model.',
-      '• Write to disk: the "Write changes with aframe-watcher" toolbar button POSTs the edit history to localhost:51234. This project\'s server includes that service: it updates public/index.html (only entities with an id) and keeps index.html.bak.'
+      '• Write to disk: the "Write changes with aframe-watcher" toolbar button POSTs the edit history to localhost:51234. This project\'s server includes that service: it updates the room file (public/rooms/*.html) that defines each entity id, keeping a .bak.'
     ],
     code: [
       '// what the button sends (history.updates)',

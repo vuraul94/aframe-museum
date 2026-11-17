@@ -10,7 +10,7 @@
  *    enabled automatically if certs/key.pem and certs/cert.pem exist
  *    (generate them with `npm run cert`).
  *  - Inspector save service on localhost:51234 (see inspector-save.js):
- *    the Inspector's "Write changes" button saves edits to public/index.html.
+ *    the Inspector's "Write changes" button saves edits to public/index.html and public/rooms/*.html.
  *    Disable it with SAVE=0.
  *
  * Usage: npm start            → http(s)://localhost:8080
@@ -147,4 +147,4 @@ server.listen(PORT, HOST, () => {
   console.log('  ℹ  Preload libraries for offline use: `npm run vendor`\n');
 });
 
-if (process.env.SAVE !== '0') startInspectorSave({ htmlFile: path.join(PUBLIC_DIR, 'index.html') });
+if (process.env.SAVE !== '0') startInspectorSave({ publicDir: PUBLIC_DIR });

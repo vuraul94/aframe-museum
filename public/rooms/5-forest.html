@@ -1,0 +1,67 @@
+<!--
+  Station 5 · Forest: animated glTF fox, procedural forest, AR and conclusion
+
+  Room fragment, not a full page. js/core/museum-loader.js inserts it into:
+    - index.html → one <a-scene> with all the rooms
+    - room.html?station=5 → its own <a-scene>
+  Top-level elements go inside #museum, unless they say otherwise with
+  data-mount="scene" (scene root: survives hide-on-enter-ar) or data-mount="body".
+  Relative URLs resolve against the page (the site root), not this folder.
+-->
+
+<!-- ============ STATION 5 · FOREST, AR AND CONCLUSION ============ -->
+<!-- Outdoors: the museum ends at the previous doorway. forest-environment
+     generates ground, sky, hills and trees (forest.js) -->
+<a-entity id="st5" museum-station="index: 4; name: Forest" position="0 0 -56" forest-environment>
+  <!-- Forest sun and sky light: they only turn on while you are here (station-light) -->
+  <a-entity id="sunTarget" position="0 0 -2.4"></a-entity>
+  <a-entity position="7 13 3" station-light="station: 4; intensity: 2.6"
+            light="type: directional; color: #fff0d2; castShadow: true; target: #sunTarget; shadowCameraLeft: -9; shadowCameraRight: 9; shadowCameraTop: 9; shadowCameraBottom: -9; shadowCameraFar: 40; shadowMapWidth: 2048; shadowMapHeight: 2048; shadowBias: -0.0005"></a-entity>
+  <a-entity station-light="station: 4; intensity: 1" light="type: hemisphere; color: #cfe8ff; groundColor: #56703a"></a-entity>
+
+  <!-- Wooden sign with the title -->
+  <a-cylinder position="-2.35 1.85 -7.3" radius="0.09" height="3.7" material="color: #6b4a2f; roughness: 1" shadow="cast: true"></a-cylinder>
+  <a-cylinder position="2.35 1.85 -7.3" radius="0.09" height="3.7" material="color: #6b4a2f; roughness: 1" shadow="cast: true"></a-cylinder>
+  <a-box position="0 3.15 -7.36" width="4.75" height="1.15" depth="0.06" material="color: #5a3d26; roughness: 1"></a-box>
+  <a-entity canvas-panel="id: s5-title; width: 4.4" position="0 3.15 -7.32"></a-entity>
+
+  <!-- Fox plaque: current clip + info -->
+  <a-entity position="0 0 1.1">
+    <a-box position="0 0.2 0" width="1.0" height="0.4" depth="0.22" material="color: #5a3d26; roughness: 1"></a-box>
+    <a-entity id="foxLabel" canvas-label="text: Walk · click to change; width: 1.4; color: #ffe8c2; size: 60" position="0 0.55 0"></a-entity>
+    <a-entity ui-button="label: View info; color: #1fa9d6" info-toggle="#p-fox" position="0 0.22 0.12"></a-entity>
+    <a-entity id="p-fox" canvas-panel="id: fox; width: 2.6" popup position="0 2.4 -0.4"></a-entity>
+  </a-entity>
+
+  <!-- AR zone (left) -->
+  <a-entity position="-3.9 0 -1.2" rotation="0 30 0">
+    <a-entity canvas-panel="id: ar-intro; width: 2.2" position="0 1.75 0"></a-entity>
+    <a-entity ui-button="label: Enter AR; color: #1fa9d6; icon: AR; width: 0.8" enter-ar-button position="-0.45 0.45 0.1"></a-entity>
+    <a-entity ui-button="label: View info; color: #1fa9d6" info-toggle="#p-ar" position="0.45 0.45 0.1"></a-entity>
+    <a-entity id="p-ar" canvas-panel="id: ar; width: 2.5" popup position="0 2.2 0.5"></a-entity>
+  </a-entity>
+
+  <!-- Conclusion (right) -->
+  <a-entity position="3.9 0 -1.2" rotation="0 -30 0">
+    <a-entity canvas-panel="id: outro; width: 2.4" position="0 1.9 0"></a-entity>
+    <a-entity ui-button="label: Resources; color: #1fa9d6" info-toggle="#p-res" position="0 0.45 0.1"></a-entity>
+    <a-entity id="p-res" canvas-panel="id: res; width: 2.6" popup position="0 2.1 0.5"></a-entity>
+  </a-entity>
+</a-entity>
+
+
+<!-- AR exhibit: an external animated glTF model (free to use, see README credits).
+     It lives outside #museum so it stays visible in AR (ar-hit-test places it on real surfaces).
+     #foxOrbit spins; the fox, 2 m from its center, walks in a circle. Click it to change clip. -->
+<a-entity id="arExhibit" data-mount="scene" position="0 0 -58.4">
+  <a-entity id="foxOrbit" orbit="speed: 14">
+    <a-entity id="fox" gltf-model="url(vendor/models/fox.glb)"
+              position="2 0 0" rotation="0 180 0" scale="0.009 0.009 0.009" shadow="cast: true"
+              gltf-animation="clip: Walk; crossFade: 0.45"
+              clip-cycler="clips: Survey, Walk, Run; speeds: 0, 14, 42; orbit: #foxOrbit; label: #foxLabel">
+      <!-- Invisible hit box: raycasting a box is cheaper and more reliable than a skinned mesh.
+           Its click events bubble up to #fox. Units are the model's (scale 0.009). -->
+      <a-box class="clickable" width="40" height="75" depth="150" position="0 38 -8" material="visible: false"></a-box>
+    </a-entity>
+  </a-entity>
+</a-entity>

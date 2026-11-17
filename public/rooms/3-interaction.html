@@ -1,0 +1,39 @@
+<!--
+  Station 3 · Interaction: mouseenter / mouseleave / click, gaze and laser
+
+  Room fragment, not a full page. js/core/museum-loader.js inserts it into:
+    - index.html → one <a-scene> with all the rooms
+    - room.html?station=3 → its own <a-scene>
+  Top-level elements go inside #museum, unless they say otherwise with
+  data-mount="scene" (scene root: survives hide-on-enter-ar) or data-mount="body".
+  Relative URLs resolve against the page (the site root), not this folder.
+-->
+
+<!-- ============ STATION 3 · INTERACTIVITY ============ -->
+<a-entity id="st3" museum-station="index: 2; name: Interaction" position="0 0 -28">
+  <a-entity canvas-panel="id: s3-title; width: 4.4" position="0 4.2 -6.8"></a-entity>
+
+  <a-cylinder position="-2.6 0.45 -1.6" radius="0.35" height="0.9" material="color: #2a3042; roughness: 0.6"></a-cylinder>
+  <a-cylinder position="0 0.45 -1.6" radius="0.35" height="0.9" material="color: #2a3042; roughness: 0.6"></a-cylinder>
+  <a-cylinder position="2.6 0.45 -1.6" radius="0.35" height="0.9" material="color: #2a3042; roughness: 0.6"></a-cylinder>
+
+  <a-torus-knot position="-2.6 1.35 -1.6" radius="0.22" radius-tubular="0.06"
+                material="color: #2ec4b6; metalness: 0.3; roughness: 0.3" shadow="cast: true" spin="speed: 25"
+                interactive-exhibit="panel: #p-hover; label: Knot"></a-torus-knot>
+  <a-icosahedron position="0 1.35 -1.6" radius="0.3"
+                 material="color: #ff9f1c; metalness: 0.2; roughness: 0.4; flatShading: true" shadow="cast: true" spin="speed: -20"
+                 interactive-exhibit="panel: #p-click; label: Icosahedron"></a-icosahedron>
+  <a-dodecahedron position="2.6 1.35 -1.6" radius="0.3"
+                  material="color: #7b61ff; metalness: 0.5; roughness: 0.3; flatShading: true" shadow="cast: true" spin="speed: 30; axis: x"
+                  interactive-exhibit="panel: #p-laser; label: Dodecahedron"></a-dodecahedron>
+
+  <a-entity ui-button="label: View info; color: #22a397" info-toggle="#p-hover" position="-2.6 0.3 -1.2"></a-entity>
+  <a-entity ui-button="label: View info; color: #22a397" info-toggle="#p-click" position="0 0.3 -1.2"></a-entity>
+  <a-entity ui-button="label: View info; color: #22a397" info-toggle="#p-laser" position="2.6 0.3 -1.2"></a-entity>
+
+  <a-entity id="p-hover" canvas-panel="id: hover; width: 2.3" popup position="-2.6 2.65 -0.9"></a-entity>
+  <a-entity id="p-click" canvas-panel="id: click; width: 2.3" popup position="0 2.65 -0.9"></a-entity>
+  <a-entity id="p-laser" canvas-panel="id: laser; width: 2.3" popup position="2.6 2.65 -0.9"></a-entity>
+
+  <a-entity id="event-log" canvas-panel="id: log; width: 2.4" position="-4.3 2.0 -1.0" rotation="0 42 0"></a-entity>
+</a-entity>

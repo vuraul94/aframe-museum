@@ -1,0 +1,56 @@
+<!--
+  Station 1 · Entrance: ECS, primitives, PBR and the Inspector
+
+  Room fragment, not a full page. js/core/museum-loader.js inserts it into:
+    - index.html → one <a-scene> with all the rooms
+    - room.html?station=1 → its own <a-scene>
+  Top-level elements go inside #museum, unless they say otherwise with
+  data-mount="scene" (scene root: survives hide-on-enter-ar) or data-mount="body".
+  Relative URLs resolve against the page (the site root), not this folder.
+-->
+
+<!-- ============ STATION 1 · ENTRANCE / ECS ============ -->
+<a-entity id="st1" museum-station="index: 0; name: Entrance" position="0 0 0">
+  <a-entity canvas-panel="id: s1-title; width: 4.4" position="0 4.2 -6.8"></a-entity>
+  <a-entity canvas-panel="id: welcome; width: 3.0" position="0 2.55 -3.2"></a-entity>
+
+  <!-- Primitives with PBR materials -->
+  <a-cylinder position="-1.1 0.275 -1.8" radius="0.3" height="0.55" material="color: #2a3042; roughness: 0.6"></a-cylinder>
+  <a-cylinder position="0 0.275 -1.8" radius="0.3" height="0.55" material="color: #2a3042; roughness: 0.6"></a-cylinder>
+  <a-cylinder position="1.1 0.275 -1.8" radius="0.3" height="0.55" material="color: #2a3042; roughness: 0.6"></a-cylinder>
+  <a-box position="-1.1 0.88 -1.8" width="0.42" height="0.42" depth="0.42" color="#ef2d5e" metalness="0.2" roughness="0.4" spin="speed: 30" shadow="cast: true"></a-box>
+  <a-sphere position="0 0.88 -1.8" radius="0.26" color="#4cc9f0" metalness="0.9" roughness="0.15" shadow="cast: true"></a-sphere>
+  <a-cylinder position="1.1 0.88 -1.8" radius="0.18" height="0.5" color="#ffb400" metalness="0.6" roughness="0.45" spin="speed: -40; axis: z" shadow="cast: true"></a-cylinder>
+  <a-entity ui-button="label: View info" info-toggle="#p-prim" position="0 0.3 -1.42"></a-entity>
+  <a-entity id="p-prim" canvas-panel="id: prim; width: 2.6" popup position="0 2.3 -0.9"></a-entity>
+
+  <!-- Live ECS demo (left) -->
+  <a-entity position="-4 0 -1.4" rotation="0 38 0">
+    <a-box position="0 0.35 0" width="0.8" height="0.7" depth="0.8" material="color: #2a3042; roughness: 0.6"></a-box>
+    <a-box id="ecsDemo" position="0 1.05 0" width="0.5" height="0.5" depth="0.5"
+           material="color: #ef2d5e; metalness: 0.3; roughness: 0.35" shadow="cast: true"></a-box>
+    <a-entity ui-button="width: 0.55" ecs-toggle="target: #ecsDemo; component: spin" position="0.85 1.25 0.1"></a-entity>
+    <a-entity ui-button="width: 0.55" ecs-toggle="target: #ecsDemo; component: bob" position="0.85 1.0 0.1"></a-entity>
+    <a-entity ui-button="width: 0.55" ecs-toggle="target: #ecsDemo; component: color-cycle" position="0.85 0.75 0.1"></a-entity>
+    <a-entity ui-button="label: View info" info-toggle="#p-ecs" position="-0.4 0.3 0.45"></a-entity>
+    <!-- Opens the A-Frame Inspector with #ecsDemo selected -->
+    <a-entity ui-button="label: Inspector; color: #d9a400; icon: ⚙" open-inspector="#ecsDemo" position="0.4 0.3 0.45"></a-entity>
+    <a-entity ui-button="label: Inspector?; color: #d9a400; width: 0.6" info-toggle="#p-insp" position="-0.95 1.0 0.1"></a-entity>
+    <!-- How to keep Inspector edits (copy HTML, export glTF, write to index.html) -->
+    <a-entity ui-button="label: Save edits; color: #d9a400; width: 0.6; icon: ↓" info-toggle="#p-save" position="-0.95 0.75 0.1"></a-entity>
+    <a-entity canvas-panel="id: inspector; width: 1.9" ecs-inspector="#ecsDemo" position="0 2.3 -0.2"></a-entity>
+    <a-entity id="p-ecs" canvas-panel="id: ecs; width: 2.5" popup position="0 2.35 0.5"></a-entity>
+    <a-entity id="p-insp" canvas-panel="id: inspector-tool; width: 2.5" popup position="0 2.35 0.55"></a-entity>
+    <a-entity id="p-save" canvas-panel="id: inspector-save; width: 2.6" popup position="0 2.35 0.6"></a-entity>
+  </a-entity>
+
+  <!-- PBR grid (right) — generated in code by pbr-grid -->
+  <a-entity position="4 0 -1.4" rotation="0 -38 0">
+    <a-box position="0 0.3 0" width="1.6" height="0.6" depth="0.5" material="color: #2a3042; roughness: 0.6"></a-box>
+    <a-entity pbr-grid position="0 0.85 0"></a-entity>
+    <a-entity canvas-label="text: metalness 0 → 1; width: 1.4" position="0 2.25 0"></a-entity>
+    <a-entity canvas-label="text: roughness 0 → 1; width: 1.4" position="-0.9 1.4 0" rotation="0 0 -90"></a-entity>
+    <a-entity ui-button="label: View info" info-toggle="#p-pbr" position="0 0.3 0.3"></a-entity>
+    <a-entity id="p-pbr" canvas-panel="id: pbr; width: 2.4" popup position="0 2.45 0.6"></a-entity>
+  </a-entity>
+</a-entity>
