@@ -1,5 +1,5 @@
 /**
- * Station 2 · Procedural textures, PBR environment and lights.
+ * Station 3 · Procedural textures, PBR environment and lights.
  * No external images: everything is generated with <canvas>, SVG or a mini-scene.
  */
 import { makeCanvasTexture, applyMap } from '../lib/canvas.js';

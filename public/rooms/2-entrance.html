@@ -1,16 +1,16 @@
 <!--
-  Station 1 · Entrance: ECS, primitives, PBR and the Inspector
+  Station 2 · Entrance: ECS, primitives, PBR and the Inspector
 
   Room fragment, not a full page. js/core/museum-loader.js inserts it into:
     - index.html → one <a-scene> with all the rooms
-    - room.html?station=1 → its own <a-scene>
+    - room.html?station=2 → its own <a-scene>
   Top-level elements go inside #museum, unless they say otherwise with
   data-mount="scene" (scene root: survives hide-on-enter-ar) or data-mount="body".
   Relative URLs resolve against the page (the site root), not this folder.
 -->
 
 <!-- ============ STATION 1 · ENTRANCE / ECS ============ -->
-<a-entity id="st1" museum-station="index: 0; name: Entrance" position="0 0 0">
+<a-entity id="st1" museum-station="index: 1; name: Entrance" position="0 0 -14">
   <a-entity canvas-panel="id: s1-title; width: 4.4" position="0 4.2 -6.8"></a-entity>
   <a-entity canvas-panel="id: welcome; width: 3.0" position="0 2.55 -3.2"></a-entity>
 

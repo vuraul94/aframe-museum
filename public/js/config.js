@@ -1,10 +1,10 @@
 /** Constants shared across the whole app */
 
-/** Accent color for each station (index 0..4) */
-export const ACCENTS = ['#ef2d5e', '#ffb400', '#2ec4b6', '#7b61ff', '#4cc9f0'];
+/** Accent color for each station (index 0..5) */
+export const ACCENTS = ['#a3e635', '#ef2d5e', '#ffb400', '#2ec4b6', '#7b61ff', '#4cc9f0'];
 
 /** One file per room, in public/rooms/ (tour order) */
-export const ROOM_FILES = ['1-entrance', '2-motion', '3-interaction', '4-multimedia', '5-forest'];
+export const ROOM_FILES = ['1-setup', '2-entrance', '3-motion', '4-interaction', '5-multimedia', '6-forest'];
 
 /** Number of rooms */
 export const STATIONS = ROOM_FILES.length;

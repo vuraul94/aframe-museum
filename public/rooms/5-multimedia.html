@@ -1,9 +1,9 @@
 <!--
-  Station 4 · Multimedia: spatial audio, video dialog, iframes, robot arm, fonts
+  Station 5 · Multimedia: spatial audio, video dialog, iframes, robot arm, fonts
 
   Room fragment, not a full page. js/core/museum-loader.js inserts it into:
     - index.html → one <a-scene> with all the rooms
-    - room.html?station=4 → its own <a-scene>
+    - room.html?station=5 → its own <a-scene>
   Top-level elements go inside #museum, unless they say otherwise with
   data-mount="scene" (scene root: survives hide-on-enter-ar) or data-mount="body".
   Relative URLs resolve against the page (the site root), not this folder.
@@ -18,7 +18,7 @@
 </video>
 
 <!-- ============ STATION 4 · MULTIMEDIA AND MODELS ============ -->
-<a-entity id="st4" museum-station="index: 3; name: Multimedia" position="0 0 -42">
+<a-entity id="st4" museum-station="index: 4; name: Multimedia" position="0 0 -56">
   <a-entity canvas-panel="id: s4-title; width: 4.4" position="0 4.2 -6.8"></a-entity>
 
   <!-- Spatial audio (left) -->

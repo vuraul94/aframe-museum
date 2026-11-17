@@ -3,6 +3,7 @@
  * and AR mode handling (station 5).
  */
 import { toast } from '../core/feedback.js';
+import { STATIONS } from '../config.js';
 
 const UP = new THREE.Vector3(0, 1, 0);
 
@@ -60,7 +61,7 @@ AFRAME.registerComponent('vr-station-buttons', {
  * repositions it on real surfaces). On exit: everything goes back in place.
  */
 AFRAME.registerComponent('ar-mode-handler', {
-  schema: { exhibit: { type: 'selector', default: '#arExhibit' }, returnTo: { default: 4 } },
+  schema: { exhibit: { type: 'selector', default: '#arExhibit' }, returnTo: { default: STATIONS - 1 } },
   init() {
     const ex = this.data.exhibit;
     if (!ex) return;   // multi-scene version: only the forest room has the AR exhibit

@@ -1,5 +1,5 @@
 /**
- * Station 5 · External (non-native) animated models.
+ * Station 6 · External (non-native) animated models.
  *
  * A-Frame loads glTF/GLB natively with `gltf-model`, but it does NOT play
  * the animation clips stored inside the file. That needs a THREE.AnimationMixer:

@@ -1,5 +1,5 @@
 /**
- * Station 4 · Video in a 3D dialog.
+ * Station 5 · Video in a 3D dialog.
  *
  * The <video> element lives in the HTML (outside <a-assets> so it does not
  * block the scene load) with two <source>s: H.264 (.m4v) and a VP9 (.webm)

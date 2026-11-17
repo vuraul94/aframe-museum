@@ -19,18 +19,19 @@
   <!-- ================= 2D HUD (presentation mode) ================= -->
   <div id="hud">
     <span class="brand">A-Frame</span>
-    <button data-station="0"><b>1</b>Entrance</button>
-    <button data-station="1"><b>2</b>Motion</button>
-    <button data-station="2"><b>3</b>Interaction</button>
-    <button data-station="3"><b>4</b>Multimedia</button>
-    <button data-station="4"><b>5</b>Forest · AR</button>
+    <button data-station="0"><b>1</b>Setup</button>
+    <button data-station="1"><b>2</b>Entrance</button>
+    <button data-station="2"><b>3</b>Motion</button>
+    <button data-station="3"><b>4</b>Interaction</button>
+    <button data-station="4"><b>5</b>Multimedia</button>
+    <button data-station="5"><b>6</b>Forest · AR</button>
     <button id="inspectorBtn" class="tool" title="A-Frame Inspector (E or Ctrl+Alt+I)">🛠 Inspector</button>
     <span id="timer" title="T: start/pause · R: reset">10:00</span>
     <!-- Same museum, one <a-scene> per room (room.html mounts a single rooms/*.html file) -->
     <a id="modeLink" class="mode" href="room.html?station=1" title="Switch between one scene and one scene per room">⇄ Scene per room</a>
   </div>
   <div id="help">
-    <kbd>1</kbd>–<kbd>5</kbd> / <kbd>N</kbd> <kbd>P</kbd> / <kbd>PageDown</kbd> <kbd>PageUp</kbd> stations ·
+    <kbd>1</kbd>–<kbd>6</kbd> / <kbd>N</kbd> <kbd>P</kbd> / <kbd>PageDown</kbd> <kbd>PageUp</kbd> stations ·
     <kbd>WASD</kbd> + drag: move · <kbd>I</kbd> panels ·
     <kbd>E</kbd> / <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>I</kbd> Inspector ·
     <kbd>G</kbd> gaze · <kbd>T</kbd>/<kbd>R</kbd> Timer · <kbd>H</kbd> hide HUD
@@ -56,7 +57,7 @@
     loading-screen="dotsColor: #ef2d5e; backgroundColor: #0b0f1a">
 
     <!-- ---------- Player: rig + camera + controllers ---------- -->
-    <a-entity id="rig" position="0 0 4">
+    <a-entity id="rig" position="0 0 4" room-bounds>
       <a-entity id="camera" camera position="0 1.6 0"
                 look-controls="pointerLockEnabled: false"
                 wasd-controls="acceleration: 35">
@@ -84,7 +85,7 @@
       <!-- Rooms are inserted here from public/rooms/*.html (js/core/museum-loader.js) -->
     </a-entity>
     <!-- ================= END OF MUSEUM ================= -->
-    <!-- The fox (#arExhibit, data-mount="scene") is added here from rooms/5-forest.html -->
+    <!-- The fox (#arExhibit, data-mount="scene") is added here from rooms/6-forest.html -->
   </a-scene>
   </template>
 

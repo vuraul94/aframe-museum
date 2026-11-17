@@ -23,8 +23,8 @@ AFRAME.registerSystem('museum', {
     this.sceneEl.addEventListener('loaded', () => setTimeout(() => this.goTo(this.current, true), 0));
   },
 
-  register(el, { index, name }) {
-    this.stations[index] = { el, name };
+  register(el, { index, name, bounds }) {
+    this.stations[index] = { el, name, bounds: bounds.map(Number) };
   },
 
   /** Moves (animated) the player rig to station i */
@@ -44,6 +44,9 @@ AFRAME.registerSystem('museum', {
     const from = rig.object3D.position;
     const to = next.el.object3D.position;
     rig.object3D.rotation.set(0, 0, 0);
+    // room-bounds pauses while the rig flies between rooms
+    this.moving = true;
+    rig.addEventListener('animationcomplete__nav', () => { this.moving = false; }, { once: true });
     rig.setAttribute('animation__nav', {
       property: 'position',
       from: `${from.x} ${from.y} ${from.z}`,
@@ -75,6 +78,12 @@ AFRAME.registerSystem('museum', {
 
 /** Marks an entity as a tour station */
 AFRAME.registerComponent('museum-station', {
-  schema: { index: { type: 'int' }, name: { type: 'string' } },
+  schema: {
+    index: { type: 'int' },
+    name: { type: 'string' },
+    // Walkable area relative to the station: xMin xMax zMin zMax (meters).
+    // Default: inside the walls of a 14 × 14 m room (see room-bounds)
+    bounds: { type: 'array', default: ['-6.5', '6.5', '-6.5', '6.5'] }
+  },
   init() { this.el.sceneEl.systems.museum.register(this.el, this.data); }
 });

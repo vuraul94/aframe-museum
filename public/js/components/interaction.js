@@ -1,5 +1,5 @@
 /**
- * Station 3 · Exhibits that react to mouseenter / mouseleave / click.
+ * Station 4 · Exhibits that react to mouseenter / mouseleave / click.
  * Events are emitted by the `cursor` component (mouse, gaze or VR laser).
  */
 import { togglePanel, MuseumLog } from '../core/feedback.js';

@@ -1,5 +1,5 @@
 /**
- * Station 1 · Live ECS demo.
+ * Station 2 · Live ECS demo.
  * Simple components (spin, bob, color-cycle) added to and removed from
  * an entity at runtime, plus a panel that mirrors its state.
  */

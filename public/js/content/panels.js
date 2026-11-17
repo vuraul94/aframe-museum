@@ -6,11 +6,103 @@
  */
 import { ACCENTS } from '../config.js';
 
-const [A1, A2, A3, A4, A5] = ACCENTS;
+const [A0, A1, A2, A3, A4, A5] = ACCENTS;
 
 export const PANELS = {
-  /* ───────────── Station 1 · Entrance ───────────── */
-  's1-title': { kicker: 'Station 1 · Entrance', title: 'ECS architecture and primitives', accent: A1 },
+  /* ───────────── Station 1 · Setup ───────────── */
+  'setup-title': { kicker: 'Station 1 · Setup', title: 'Setting up A-Frame and a scene', accent: A0 },
+  'setup-include': {
+    kicker: 'Step 1', accent: A0, title: 'Add A-Frame to a page',
+    body: [
+      '• CDN: one <script> in the <head>, before the scene. Nothing else to install.',
+      '• npm: npm install aframe and import it in your bundle (Vite, webpack…).',
+      '• It ships its own Three.js (1.7 → r173), exposed as AFRAME.THREE and window.THREE.',
+      'Serve the page over HTTP, not file:// (press "Serving").'
+    ],
+    code: [
+      '<head>',
+      '  <script src="https://aframe.io/',
+      '    releases/1.7.1/aframe.min.js"></script>',
+      '</head>',
+      '',
+      '# or with npm',
+      'npm install aframe',
+      "import 'aframe';"
+    ]
+  },
+  'setup-serve': {
+    kicker: 'Serving', accent: A0, title: 'Local server, HTTPS and devices',
+    body: [
+      '• file:// breaks models, textures and fonts (CORS): always use a local server.',
+      '• WebXR needs HTTPS outside localhost: a certificate (npm run cert here) or a host such as GitHub Pages.',
+      '• No headset? Immersive Web Emulator in Chrome DevTools simulates VR and AR.'
+    ],
+    code: [
+      'npx serve .                 # any folder',
+      'python3 -m http.server 8080',
+      'npm start                   # this museum'
+    ]
+  },
+  'setup-hello': {
+    kicker: 'Step 2', accent: A0, title: 'Hello WebXR: the minimal scene',
+    body: [
+      'The model in front of you is exactly this code, scaled down. <a-scene> creates the renderer, the camera with look and WASD controls, the render loop and the VR/AR buttons by itself.'
+    ],
+    code: [
+      '<a-scene>',
+      '  <a-box position="-1 0.5 -3" rotation="0 45 0"',
+      '         color="#4CC3D9"></a-box>',
+      '  <a-sphere position="0 1.25 -5" radius="1.25"',
+      '            color="#EF2D5E"></a-sphere>',
+      '  <a-cylinder position="1 0.75 -3" radius="0.5"',
+      '              height="1.5" color="#FFC65D"></a-cylinder>',
+      '  <a-plane position="0 0 -4" rotation="-90 0 0"',
+      '           width="4" height="4" color="#7BC8A4"></a-plane>',
+      '  <a-sky color="#ECECEC"></a-sky>',
+      '</a-scene>'
+    ]
+  },
+  'setup-scene': {
+    kicker: '<a-scene>', accent: A0, title: 'Configuring the scene',
+    body: [
+      'Scene-wide settings are components on <a-scene>:',
+      '• renderer: antialias, colorManagement, toneMapping',
+      '• background, fog, shadow, stats',
+      '• webxr + xr-mode-ui: XR features and the VR/AR buttons',
+      '• inspector, loading-screen, embedded (inside a page layout)',
+      'Try fog and stats: they switch on live.'
+    ],
+    code: [
+      '<a-scene',
+      '  renderer="antialias: true; colorManagement: true"',
+      '  shadow="type: pcfsoft"',
+      '  fog="type: linear; color: #0B0F1A; far: 16"',
+      '  stats',
+      '  webxr="optionalFeatures: hit-test"',
+      '  xr-mode-ui="XRMode: xr">'
+    ]
+  },
+  'setup-defaults': {
+    kicker: 'Defaults and assets', accent: A0, title: 'Camera, assets and your own code',
+    body: [
+      '• No camera in the markup? A-Frame adds one at 1.6 m with look-controls and wasd-controls.',
+      '• <a-assets> preloads images, models and media before the first frame (with a timeout).',
+      '• Register your components before <a-scene> is parsed: a <script> above it, or ES modules (they run before DOMContentLoaded).'
+    ],
+    code: [
+      '<a-assets timeout="3000">',
+      '  <img id="wood" src="wood.jpg">',
+      '  <a-asset-item id="fox" src="fox.glb">',
+      '  </a-asset-item>',
+      '</a-assets>',
+      '<a-entity camera look-controls wasd-controls',
+      '  position="0 1.6 0"></a-entity>',
+      '<a-entity gltf-model="#fox"></a-entity>'
+    ]
+  },
+
+  /* ───────────── Station 2 · Entrance ───────────── */
+  's1-title': { kicker: 'Station 2 · Entrance', title: 'ECS architecture and primitives', accent: A1 },
   welcome: {
     kicker: 'Welcome', accent: A1,
     title: 'A-Frame: 3D, VR and AR with HTML',
@@ -117,8 +209,8 @@ export const PANELS = {
     ]
   },
 
-  /* ───────────── Station 2 · Motion ───────────── */
-  's2-title': { kicker: 'Station 2 · Motion', title: 'Animation, light and textures', accent: A2 },
+  /* ───────────── Station 3 · Motion ───────────── */
+  's2-title': { kicker: 'Station 3 · Motion', title: 'Animation, light and textures', accent: A2 },
   anim: {
     kicker: 'animation component', accent: A2, title: 'Declarative animations',
     body: [
@@ -217,8 +309,8 @@ export const PANELS = {
     ]
   },
 
-  /* ───────────── Station 3 · Interaction ───────────── */
-  's3-title': { kicker: 'Station 3 · Interaction', title: 'Events and raycasting', accent: A3 },
+  /* ───────────── Station 4 · Interaction ───────────── */
+  's3-title': { kicker: 'Station 4 · Interaction', title: 'Events and raycasting', accent: A3 },
   hover: {
     kicker: 'mouseenter / mouseleave', accent: A3, title: 'Hover with raycaster',
     body: [
@@ -271,8 +363,8 @@ export const PANELS = {
   },
   log: { kicker: 'Live', accent: A3, title: 'Event log', code: ['Hover over the exhibits…'] },
 
-  /* ───────────── Station 4 · Multimedia ───────────── */
-  's4-title': { kicker: 'Station 4 · Multimedia', title: 'Spatial audio, video, text and models', accent: A4 },
+  /* ───────────── Station 5 · Multimedia ───────────── */
+  's4-title': { kicker: 'Station 5 · Multimedia', title: 'Spatial audio, video, text and models', accent: A4 },
   audio: {
     kicker: '<a-sound>', accent: A4, title: 'Positional spatial audio',
     body: [
@@ -360,8 +452,8 @@ export const PANELS = {
     ]
   },
 
-  /* ───────────── Station 5 · AR · Conclusion ───────────── */
-  's5-title': { kicker: 'Station 5 · Forest · AR · Conclusion', title: 'An animated model in its habitat', accent: A5 },
+  /* ───────────── Station 6 · AR · Conclusion ───────────── */
+  's5-title': { kicker: 'Station 6 · Forest · AR · Conclusion', title: 'An animated model in its habitat', accent: A5 },
   fox: {
     kicker: 'gltf-model + AnimationMixer', accent: A5, title: 'Animated glTF: the fox',
     body: [

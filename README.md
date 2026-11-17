@@ -1,10 +1,10 @@
 # A-Frame Museum · spatial presentation
 
-An interactive virtual museum built with [A-Frame](https://aframe.io) that works as the slides for a 10-minute tech talk. Each room demonstrates a framework feature live: ECS, PBR, animation, lights and shadows, events and raycasting, spatial audio, video in a 3D dialog, a web page and a YouTube video in `<iframe>`s inside the scene, MSDF text, hierarchical models, an external animated glTF model (a fox) in a procedural forest, WebXR (VR/AR) and the **A-Frame Inspector**, including saving its edits back to `index.html`.
+An interactive virtual museum built with [A-Frame](https://aframe.io) that works as the slides for a 10-minute tech talk. The first room shows how to set up A-Frame and configure a scene; each of the others demonstrates a framework feature live: ECS, PBR, animation, lights and shadows, events and raycasting, spatial audio, video in a 3D dialog, a web page and a YouTube video in `<iframe>`s inside the scene, MSDF text, hierarchical models, an external animated glTF model (a fox) in a procedural forest, WebXR (VR/AR) and the **A-Frame Inspector**, including saving its edits back to `index.html`.
 
 - Minute-by-minute talk script: [docs/SCRIPT.md](docs/SCRIPT.md)
 - Two versions of the same museum:
-  - `index.html`: **one scene** with the 5 rooms; the rig teleports between them.
+  - `index.html`: **one scene** with the 6 rooms; the rig teleports between them.
   - `room.html?station=N`: **one scene per room**; changing room loads another page.
   - Each room is its own file in [`public/rooms/`](public/rooms/); both versions are assembled from those files. The **⇄** link in the HUD switches between them in the same room.
 
@@ -47,15 +47,16 @@ public/
   index.html       Shell: HUD + <template> with the <a-scene>, player rig, global lights and an empty #museum
   room.html        Multi-scene version: same shell, one room per page
   rooms/           One file per room (declarative markup only)
-    1-entrance.html      ECS, primitives, PBR, Inspector
-    2-motion.html        animation, lights, procedural textures
-    3-interaction.html   events, gaze, laser, event log
-    4-multimedia.html    spatial audio, video dialog, iframes, robot arm, fonts
-    5-forest.html        forest, animated fox (#arExhibit), AR, conclusion
+    1-setup.html         adding A-Frame, the Hello WebXR scene, configuring <a-scene> (live fog/stats)
+    2-entrance.html      ECS, primitives, PBR, Inspector
+    3-motion.html        animation, lights, procedural textures, external assets, Blender export
+    4-interaction.html   events, gaze, laser, event log
+    5-multimedia.html    spatial audio, video dialog, iframes, robot arm, fonts
+    6-forest.html        forest, animated fox (#arExhibit), AR, conclusion
   css/hud.css      Presenter HUD styles
   js/
     register.js    Registers every system and component (shared by both versions)
-    main.js        Entry point of index.html: mounts the 5 rooms in one scene
+    main.js        Entry point of index.html: mounts every room in one scene
     room.js        Entry point of room.html: mounts only room N
     config.js      Constants (colors, distances, talk duration)
     content/
@@ -66,7 +67,9 @@ public/
       presenter.js       HUD, keyboard shortcuts and timer
       feedback.js        toast, togglePanel and live event log
     components/
-      ui.js              canvas-panel, canvas-label, ui-button, popup, info-toggle
+      ui.js              canvas-panel, canvas-label, ui-button, popup, info-toggle, link-list
+      setup.js           scene-toggle (switches <a-scene> components live)
+      bounds.js          room-bounds: the camera cannot leave the current room
       ecs-demo.js        spin, bob, color-cycle, ecs-toggle, ecs-inspector, pbr-grid
       materials.js       canvas-texture, plasma-texture, svg-texture, PMREM environment, lights
       interaction.js     interactive-exhibit (mouseenter / mouseleave / click)
@@ -97,6 +100,8 @@ public/
 
 **External models and animations:** A-Frame loads glTF/GLB natively (`gltf-model`) and `obj-model`; other formats (FBX, USDZ…) need a Three.js loader inside a component. The animation clips in a glTF are not played automatically: use `animation-mixer` from [aframe-extras](https://github.com/c-frame/aframe-extras) or a `THREE.AnimationMixer` (this project's `gltf-animation`). For characters, Mixamo (rig + mocap) → FBX → Blender → export `.glb`, and compress with `gltf-transform` (Draco / Meshopt). The **Blender** panel in room 2 walks through exporting an animation: named Actions, baking constraints/drivers, applying scale, then File › Export › glTF 2.0 with Animation on (mode "Actions" = one clip per action). Raycasting skinned meshes is unreliable and costly, so the fox has an invisible hit box for clicks.
 
+**Walls:** `room-bounds` (on `#rig`) keeps the camera inside the current room. Every frame it checks the camera's world position against the room's `bounds` (`museum-station`, default ±6.5 m; the forest is wider) and pushes the rig back, so it works with WASD, the VR thumbstick and real walking with a headset. It pauses while teleporting between rooms and in AR.
+
 **Rooms as separate files:** each room is an HTML fragment in `public/rooms/` (tour order in `ROOM_FILES`, `config.js`). `js/core/museum-loader.js` clones the `<a-scene>` from the `<template>` in `index.html` (a template is inert, so A-Frame does not start the scene before the rooms are in place), inserts the room fragments and then mounts the scene. Top-level elements of a room go inside `#museum`, unless they declare `data-mount="scene"` (the fox, which must survive `hide-on-enter-ar`) or `data-mount="body"` (the `<video>`). Relative URLs inside room files resolve against the page, i.e. the site root.
 
 **One scene vs one scene per room:** `index.html` mounts all five room files; `room.html` downloads the same shell and mounts just one, setting what changes (`<a-scene museum="room: N">`, `museum-architecture="only: N"` builds a closed room, `forest-environment="standalone: true"`; `ar-hit-test` is dropped when the fox is not there). In that mode the `museum` system turns `goTo(i)` into a page load (`room.html?station=i+1`), so keys, HUD and VR buttons work the same. The timer survives the page loads (`sessionStorage`).
@@ -109,13 +114,13 @@ public/
 | State (open panels, audio, timer) | Shared | Lost on change (except the timer) |
 | VR session | Continues across rooms | Ends on every page load |
 
-**Adding a room:** create `public/rooms/6-name.html` with an `<a-entity museum-station="index: 5; name: …" position="0 0 -70">`, add its name to `ROOM_FILES` and a color to `ACCENTS` (`config.js`), increase `stations` in `museum-architecture`, add the texts to `panels.js` and a button to the HUD.
+**Adding a room:** create `public/rooms/7-name.html` with an `<a-entity museum-station="index: 6; name: …" position="0 0 -84">`, add its name to `ROOM_FILES` and a color to `ACCENTS` (`config.js`), add the texts to `panels.js` and a button to the HUD.
 
 ## Controls during the talk
 
 | Key | Action |
 |---|---|
-| `1` – `5` | Jump to a station |
+| `1` – `6` | Jump to a station |
 | `N` / `P`, `PageDown` / `PageUp` | Next / previous (works with presentation clickers) |
 | `WASD` + mouse drag | Move and look around |
 | `I` | Open / close all panels in the room |

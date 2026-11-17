@@ -1,5 +1,5 @@
 /**
- * Station 5 · Procedural forest: the fox's habitat.
+ * Station 6 · Procedural forest: the fox's habitat.
  *
  * Everything is generated in code (no images): grass and dirt textures on
  * <canvas>, gradient sky, hill silhouettes, and trees, rocks, flowers and
@@ -249,10 +249,17 @@ AFRAME.registerComponent('forest-environment', {
  * light the indoor rooms: we fade it in when you arrive and out when you leave.
  */
 AFRAME.registerComponent('station-light', {
-  schema: { station: { type: 'int' }, intensity: { default: 1 } },
+  // station -1: the room this light belongs to (closest museum-station ancestor)
+  schema: { station: { type: 'int', default: -1 }, intensity: { default: 1 } },
   init() {
+    this.station = this.data.station;
+    if (this.station < 0) {
+      // The room may not be initialized yet: read the index from the attribute itself
+      const raw = this.el.closest('[museum-station]')?.getAttribute('museum-station');
+      this.station = typeof raw === 'object' && raw ? raw.index : +(/index:\s*(\d+)/.exec(raw || '') || [])[1] || 0;
+    }
     this.onChange = e => {
-      const on = e.detail.index === this.data.station || this.el.sceneEl.is('ar-mode');
+      const on = e.detail.index === this.station || this.el.sceneEl.is('ar-mode');
       this.el.setAttribute('animation__light',
         { property: 'light.intensity', to: on ? this.data.intensity : 0, dur: 900, easing: 'easeInOutQuad' }, true);
     };

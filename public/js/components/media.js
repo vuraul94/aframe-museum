@@ -1,5 +1,5 @@
 /**
- * Station 4 · Spatial audio.
+ * Station 5 · Spatial audio.
  * The sound is synthesized in JS (WAV → Blob URL) and played with the
  * `sound` component (THREE.PositionalAudio). An analyser animates bars.
  */

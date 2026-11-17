@@ -5,14 +5,14 @@
  * With outdoorLast (default) the building ends at the last partition: its
  * doorway opens onto the outdoor forest of the final station (forest.js).
  */
-import { ACCENTS, STATION_SPACING } from '../config.js';
+import { ACCENTS, STATION_SPACING, STATIONS } from '../config.js';
 
 const WALL = 'color: #232a3d; roughness: 0.92; metalness: 0';
 const DOOR = { width: 3.6, height: 3.4 };
 
 AFRAME.registerComponent('museum-architecture', {
   schema: {
-    stations: { default: 5 },
+    stations: { default: STATIONS },
     width: { default: 14 },
     height: { default: 5 },
     outdoorLast: { default: true },

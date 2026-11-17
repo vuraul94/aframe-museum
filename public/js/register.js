@@ -12,6 +12,7 @@
 import './core/museum-system.js';
 import './core/presenter.js';
 import './components/ui.js';
+import './components/setup.js';
 import './components/ecs-demo.js';
 import './components/materials.js';
 import './components/interaction.js';
@@ -22,5 +23,6 @@ import './components/iframe.js';
 import './components/models.js';
 import './components/forest.js';
 import './components/xr.js';
+import './components/bounds.js';
 import './components/inspector.js';
 import './components/architecture.js';

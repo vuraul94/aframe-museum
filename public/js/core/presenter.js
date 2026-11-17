@@ -1,11 +1,11 @@
 /**
  * Presenter mode: timer, 2D HUD and keyboard shortcuts.
  *
- *  1–5 / N P / PgDn PgUp : stations (works with presentation clickers)
+ *  1–6 / N P / PgDn PgUp : stations (works with presentation clickers)
  *  I : open/close station panels                E : A-Frame Inspector
  *  G : gaze cursor         T / R : timer        H : hide HUD
  */
-import { ACCENTS, TALK_DURATION } from '../config.js';
+import { ACCENTS, TALK_DURATION, STATIONS } from '../config.js';
 import { toast } from './feedback.js';
 import { openInspector, isInspectorOpen } from '../components/inspector.js';
 
@@ -122,7 +122,7 @@ AFRAME.registerComponent('station-nav', {
       r: () => Timer.reset(),
       h: () => document.body.classList.toggle('hud-hidden')
     };
-    if (k >= '1' && k <= '5') m.goTo(+k - 1);
+    if (k >= '1' && k <= String(STATIONS)) m.goTo(+k - 1);
     else if (actions[k]) actions[k]();
   }
 });
