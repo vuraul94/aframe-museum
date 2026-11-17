@@ -14,6 +14,8 @@ const PX = 1024;
 /** Opens a dialog and closes any other open `.dialog` (only one at a time) */
 export function openDialog(dialog) {
   document.querySelectorAll('.dialog').forEach(d => { if (d !== dialog) closeDialog(d); });
+  // It opens on top of its kiosk: close the kiosk's other panels (same spot)
+  dialog.parentElement?.querySelectorAll(':scope > [popup]').forEach(p => { if (p !== dialog) togglePanel(p, false); });
   togglePanel(dialog, true);
   dialog.emit('dialog-opened');
 }

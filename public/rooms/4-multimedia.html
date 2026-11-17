@@ -67,14 +67,15 @@
     <a-entity ui-button="label: Web · YouTube; color: #6a50ee; icon: ⧉; width: 0.75" iframe-control="action: open; dialog: #iframeDialog; screen: #webScreen; src: https://aframe.io/docs/1.7.0/introduction/; title: A-Frame docs" position="-0.38 1.12 0.24"></a-entity>
     <a-entity ui-button="label: View info; color: #6a50ee" info-toggle="#p-iframe" position="0.38 1.12 0.24"></a-entity>
     <a-entity id="p-iframe" canvas-panel="id: iframe; width: 2.5" popup position="0 2.8 0.4"></a-entity>
-  </a-entity>
-  <!-- Iframe dialog, in front of its kiosk (nothing 3D between it and the visitor: the DOM iframe is always drawn on top): the screen is a 3D plane; html-iframe glues a real <iframe> on top (CSS3D) -->
-  <a-entity id="iframeDialog" popup position="1.65 1.95 -3.2" rotation="0 -15 0" iframe-dialog="screen: #webScreen"
-            dialog-frame="title: <iframe> in 3D · web page and YouTube; subtitle: CSS3D: real DOM aligned with the 3D camera (scroll and click it); credits: aframe.io docs · YouTube: Big Buck Bunny, Blender Foundation (CC BY 3.0)">
-    <a-entity id="webScreen" html-iframe="width: 2.6; height: 1.4625; pxWidth: 1024"></a-entity>
-    <a-entity ui-button="label: Website; color: #6a50ee; icon: ⧉" iframe-control="screen: #webScreen; src: https://aframe.io/docs/1.7.0/introduction/; title: A-Frame docs" position="-0.85 -0.95 0.01"></a-entity>
-    <a-entity ui-button="label: YouTube; color: #d62f2f; icon: ▶" iframe-control="screen: #webScreen; src: https://www.youtube-nocookie.com/embed/YE7VzlLtp-4?rel=0; title: YouTube" position="0 -0.95 0.01"></a-entity>
-    <a-entity ui-button="label: Close; color: #3a3f55; icon: ✕" iframe-control="action: close; dialog: #iframeDialog; screen: #webScreen" position="0.85 -0.95 0.01"></a-entity>
+    <!-- Its dialog opens on top of the stand (child of the kiosk), so it stays in view up close.
+         html-iframe glues a real <iframe> (DOM, CSS3D) on the 3D screen: it is always drawn above the canvas -->
+    <a-entity id="iframeDialog" popup position="0 2.6 0.35" iframe-dialog="screen: #webScreen"
+              dialog-frame="title: <iframe> in 3D · web page and YouTube; subtitle: CSS3D: real DOM aligned with the 3D camera (scroll and click it); credits: aframe.io docs · YouTube: Big Buck Bunny, Blender Foundation (CC BY 3.0)">
+      <a-entity id="webScreen" html-iframe="width: 2.6; height: 1.4625; pxWidth: 1024"></a-entity>
+      <a-entity ui-button="label: Website; color: #6a50ee; icon: ⧉" iframe-control="screen: #webScreen; src: https://aframe.io/docs/1.7.0/introduction/; title: A-Frame docs" position="-0.85 -0.95 0.01"></a-entity>
+      <a-entity ui-button="label: YouTube; color: #d62f2f; icon: ▶" iframe-control="screen: #webScreen; src: https://www.youtube-nocookie.com/embed/YE7VzlLtp-4?rel=0; title: YouTube" position="0 -0.95 0.01"></a-entity>
+      <a-entity ui-button="label: Close; color: #3a3f55; icon: ✕" iframe-control="action: close; dialog: #iframeDialog; screen: #webScreen" position="0.85 -0.95 0.01"></a-entity>
+    </a-entity>
   </a-entity>
 
   <!-- Video kiosk (back left): opens a 3D dialog with <a-video> -->
@@ -85,14 +86,14 @@
     <a-entity ui-button="label: Watch video; color: #6a50ee; icon: ▶; width: 0.75" video-control="video: #trailer; action: open; dialog: #videoDialog" position="-0.38 1.12 0.24"></a-entity>
     <a-entity ui-button="label: View info; color: #6a50ee" info-toggle="#p-video" position="0.38 1.12 0.24"></a-entity>
     <a-entity id="p-video" canvas-panel="id: video; width: 2.4" popup position="0 2.75 0.4"></a-entity>
-  </a-entity>
-  <!-- The dialog: frame + <a-video> + controls (a popup). It opens in front of its kiosk, facing the visitor -->
-  <a-entity id="videoDialog" popup position="-1.65 1.95 -3.2" rotation="0 15 0" video-dialog="video: #trailer"
-            dialog-frame="title: Big Buck Bunny · trailer; subtitle: <video> element + <a-video> = THREE.VideoTexture on a plane; credits: (c) 2008 Blender Foundation · peach.blender.org · CC BY 3.0">
-    <a-video src="#trailer" width="2.6" height="1.4625" position="0 0 0.005"></a-video>
-    <a-entity ui-button="label: Play; color: #6a50ee; icon: ▶" video-control="video: #trailer; action: toggle" position="-0.85 -1.0 0.01"></a-entity>
-    <a-entity ui-button="label: Restart; color: #6a50ee; icon: ↺" video-control="video: #trailer; action: restart" position="0 -1.0 0.01"></a-entity>
-    <a-entity ui-button="label: Close; color: #3a3f55; icon: ✕" video-control="video: #trailer; action: close; dialog: #videoDialog" position="0.85 -1.0 0.01"></a-entity>
+    <!-- Its dialog (frame + <a-video> + controls) opens on top of the stand, so it stays in view up close -->
+    <a-entity id="videoDialog" popup position="0 2.6 0.35" video-dialog="video: #trailer"
+              dialog-frame="title: Big Buck Bunny · trailer; subtitle: <video> element + <a-video> = THREE.VideoTexture on a plane; credits: (c) 2008 Blender Foundation · peach.blender.org · CC BY 3.0">
+      <a-video src="#trailer" width="2.6" height="1.4625" position="0 0 0.005"></a-video>
+      <a-entity ui-button="label: Play; color: #6a50ee; icon: ▶" video-control="video: #trailer; action: toggle" position="-0.85 -1.0 0.01"></a-entity>
+      <a-entity ui-button="label: Restart; color: #6a50ee; icon: ↺" video-control="video: #trailer; action: restart" position="0 -1.0 0.01"></a-entity>
+      <a-entity ui-button="label: Close; color: #3a3f55; icon: ✕" video-control="video: #trailer; action: close; dialog: #videoDialog" position="0.85 -1.0 0.01"></a-entity>
+    </a-entity>
   </a-entity>
 
   <!-- SDF text with several fonts (right) -->
