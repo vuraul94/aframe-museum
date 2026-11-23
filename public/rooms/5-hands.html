@@ -1,0 +1,51 @@
+<!--
+  Station 5 · Hands and XR features: hand tracking (illustrated everywhere, live on
+  a headset that supports it), what this device can do, and other WebXR features
+
+  Room fragment, not a full page. js/core/museum-loader.js inserts it into:
+    - index.html → one <a-scene> with all the rooms
+    - room.html?station=5 → its own <a-scene>
+  Top-level elements go inside #museum, unless they say otherwise with
+  data-mount="scene" (scene root: survives hide-on-enter-ar) or data-mount="body".
+  Relative URLs resolve against the page (the site root), not this folder.
+
+  The real hands live in the player rig (index.html): #leftHandTracking and
+  #rightHandTracking with hand-tracking-grab-controls, plus "hand-tracking" in
+  the scene's webxr optionalFeatures.
+-->
+
+<!-- ============ STATION 5 · HANDS AND XR FEATURES ============ -->
+<a-entity id="st-hands" museum-station="index: 4; name: Hands" position="0 0 -56">
+  <a-entity canvas-panel="id: hands-title; width: 4.4" position="0 4.2 -6.8"></a-entity>
+
+  <!-- Hand tracking explained + what this device supports, live (left) -->
+  <a-entity position="-3.6 0 -1.5" rotation="0 30 0">
+    <a-entity id="xr-status" canvas-panel="id: xr-status; width: 2.3" xr-capabilities position="0 1.9 0"></a-entity>
+    <a-entity ui-button="label: View info; color: #e8732a" info-toggle="#p-hands" position="0 0.45 0.1"></a-entity>
+    <a-entity id="p-hands" canvas-panel="id: hands; width: 2.6" popup position="0 2.2 0.5"></a-entity>
+  </a-entity>
+
+  <!-- Illustrated hand: the 25 WebXR joints doing a pinch (center) -->
+  <a-entity position="0 0 -2.2">
+    <a-cylinder radius="0.6" height="0.9" position="0 0.45 0" material="color: #2a3042; roughness: 0.6"></a-cylinder>
+    <!-- Dark backdrop so the skeleton reads well -->
+    <a-plane position="0 1.6 -0.45" width="1.5" height="1.5" material="color: #141a2b; roughness: 1"></a-plane>
+    <a-entity hand-illustration position="0 0.98 0" scale="6.5 6.5 6.5"></a-entity>
+    <a-entity canvas-label="text: 25 joints · pinch = thumb tip + index tip; width: 1.9; color: #ffd2b0; size: 52" position="0 2.5 -0.4"></a-entity>
+  </a-entity>
+
+  <!-- Grab it with your hand (headset with hand tracking): native grabbable (center right) -->
+  <a-entity position="1.7 0 -1.3">
+    <a-cylinder radius="0.3" height="0.9" position="0 0.45 0" material="color: #2a3042; roughness: 0.6"></a-cylinder>
+    <a-box id="grabCube" grabbable grab-hint position="0 1.08 0" width="0.18" height="0.18" depth="0.18"
+           material="color: #ff8a3d; metalness: 0.2; roughness: 0.35" shadow="cast: true"></a-box>
+    <a-entity canvas-label="text: grabbable · pinch it in VR; width: 1.1; color: #ffd2b0; size: 50" position="0 1.45 0"></a-entity>
+  </a-entity>
+
+  <!-- Other WebXR features (right) -->
+  <a-entity position="3.6 0 -1.5" rotation="0 -30 0">
+    <a-entity canvas-panel="id: xr-features; width: 2.4" position="0 1.95 0"></a-entity>
+    <a-entity ui-button="label: Test it; color: #e8732a" info-toggle="#p-xr-test" position="0 0.45 0.1"></a-entity>
+    <a-entity id="p-xr-test" canvas-panel="id: xr-test; width: 2.5" popup position="0 2.2 0.5"></a-entity>
+  </a-entity>
+</a-entity>

@@ -1,5 +1,5 @@
 <!--
-  Station 1 · Setup: adding A-Frame to a page, the minimal scene, configuring <a-scene>
+  Station 1 · Welcome and setup: what A-Frame is, adding it to a page, the minimal scene, configuring <a-scene>
 
   Room fragment, not a full page. js/core/museum-loader.js inserts it into:
     - index.html → one <a-scene> with all the rooms
@@ -9,9 +9,12 @@
   Relative URLs resolve against the page (the site root), not this folder.
 -->
 
-<!-- ============ STATION 1 · SETUP ============ -->
-<a-entity id="st0" museum-station="index: 0; name: Setup" position="0 0 0">
-  <a-entity canvas-panel="id: setup-title; width: 4.4" position="0 4.2 -6.8"></a-entity>
+<!-- ============ STATION 1 · WELCOME AND SETUP ============ -->
+<a-entity id="st0" museum-station="index: 0; name: Welcome" position="0 0 0">
+  <!-- Title a bit higher than in other rooms: the welcome panel sits in front of it -->
+  <a-entity canvas-panel="id: setup-title; width: 4.4" position="0 4.5 -6.8"></a-entity>
+  <!-- What A-Frame is, above the Hello WebXR model -->
+  <a-entity canvas-panel="id: welcome; width: 2.6" position="0 2.6 -3.6"></a-entity>
 
   <!-- Step 1: include A-Frame (left) -->
   <a-entity position="-3.6 0 -1.5" rotation="0 30 0">

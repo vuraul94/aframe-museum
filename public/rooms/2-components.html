@@ -1,5 +1,5 @@
 <!--
-  Station 2 · Entrance: ECS, primitives, PBR and the Inspector
+  Station 2 · Components: primitives, PBR materials, live ECS components and the Inspector
 
   Room fragment, not a full page. js/core/museum-loader.js inserts it into:
     - index.html → one <a-scene> with all the rooms
@@ -9,10 +9,9 @@
   Relative URLs resolve against the page (the site root), not this folder.
 -->
 
-<!-- ============ STATION 1 · ENTRANCE / ECS ============ -->
-<a-entity id="st1" museum-station="index: 1; name: Entrance" position="0 0 -14">
+<!-- ============ STATION 2 · COMPONENTS / ECS ============ -->
+<a-entity id="st1" museum-station="index: 1; name: Components" position="0 0 -14">
   <a-entity canvas-panel="id: s1-title; width: 4.4" position="0 4.2 -6.8"></a-entity>
-  <a-entity canvas-panel="id: welcome; width: 3.0" position="0 2.55 -3.2"></a-entity>
 
   <!-- Primitives with PBR materials -->
   <a-cylinder position="-1.1 0.275 -1.8" radius="0.3" height="0.55" material="color: #2a3042; roughness: 0.6"></a-cylinder>

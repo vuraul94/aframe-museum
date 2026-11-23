@@ -1,7 +1,7 @@
 /**
  * Presenter mode: timer, 2D HUD and keyboard shortcuts.
  *
- *  1–6 / N P / PgDn PgUp : stations (works with presentation clickers)
+ *  1–7 / N P / PgDn PgUp : stations (works with presentation clickers)
  *  I : open/close station panels                E : A-Frame Inspector
  *  G : gaze cursor         T / R : timer        H : hide HUD
  */

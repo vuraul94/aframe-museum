@@ -6,11 +6,11 @@
  */
 import { ACCENTS } from '../config.js';
 
-const [A0, A1, A2, A3, A4, A5] = ACCENTS;
+const [A0, A1, A2, A3, A4, A5, A6] = ACCENTS;
 
 export const PANELS = {
-  /* ───────────── Station 1 · Setup ───────────── */
-  'setup-title': { kicker: 'Station 1 · Setup', title: 'Setting up A-Frame and a scene', accent: A0 },
+  /* ───────────── Station 1 · Welcome and setup ───────────── */
+  'setup-title': { kicker: 'Station 1 · Welcome and setup', title: 'Welcome to A-Frame', accent: A0 },
   'setup-include': {
     kicker: 'Step 1', accent: A0, title: 'Add A-Frame to a page',
     body: [
@@ -101,10 +101,10 @@ export const PANELS = {
     ]
   },
 
-  /* ───────────── Station 2 · Entrance ───────────── */
-  's1-title': { kicker: 'Station 2 · Entrance', title: 'ECS architecture and primitives', accent: A1 },
+  /* ───────────── Station 2 · Components ───────────── */
+  's1-title': { kicker: 'Station 2 · Components', title: 'Primitives, materials and live components', accent: A1 },
   welcome: {
-    kicker: 'Welcome', accent: A1,
+    kicker: 'Welcome', accent: A0,
     title: 'A-Frame: 3D, VR and AR with HTML',
     body: [
       'Open source (MIT) web framework built on Three.js. Born in the Mozilla VR team, now maintained by the community.',
@@ -363,10 +363,65 @@ export const PANELS = {
   },
   log: { kicker: 'Live', accent: A3, title: 'Event log', code: ['Hover over the exhibits…'] },
 
-  /* ───────────── Station 5 · Multimedia ───────────── */
-  's4-title': { kicker: 'Station 5 · Multimedia', title: 'Spatial audio, video, text and models', accent: A4 },
+  /* ───────────── Station 5 · Hands and XR features ───────────── */
+  'hands-title': { kicker: 'Station 5 · Hands and XR', title: 'Hand tracking and other WebXR features', accent: A4 },
+  'xr-status': {
+    kicker: 'This device, live', accent: A4, title: 'What can it do here?',
+    body: ['Checking…']   // filled in by the xr-capabilities component
+  },
+  hands: {
+    kicker: 'hand-tracking-controls', accent: A4, title: 'Hand tracking in A-Frame',
+    body: [
+      '• Ask for it: webxr="optionalFeatures: hand-tracking". Optional, so the session still starts on devices without it.',
+      '• hand-tracking-controls draws the hand and exposes its 25 joints (wrist, 4 thumb joints, 5 per finger).',
+      '• Events: pinchstarted, pinchmoved, pinchended, with the pinch position.',
+      '• hand-tracking-grab-controls + grabbable: pinch an object to pick it up (the orange cube).',
+      '• Controllers keep working: laser-controls and hand tracking live side by side.'
+    ],
+    code: [
+      '<a-scene webxr="optionalFeatures: hand-tracking">',
+      '  <a-entity hand-tracking-grab-controls="hand: right">',
+      '  </a-entity>',
+      '  <a-box grabbable></a-box>',
+      '',
+      "hand.addEventListener('pinchstarted', e =>",
+      '  console.log(e.detail.position));'
+    ]
+  },
+  'xr-features': {
+    kicker: 'Beyond hands', accent: A4, title: 'More WebXR features',
+    body: [
+      '• hit-test: place things on real surfaces (the fox, room 7)',
+      '• plane-detection / mesh-detection: the real room as geometry (real-world-meshing)',
+      '• anchors: keep content fixed to a real spot (anchored)',
+      '• dom-overlay: HTML on top of AR on phones',
+      '• layers, depth-sensing, light estimation: depend on browser and device',
+      'Request them as optional and check what the session really enabled.'
+    ],
+    code: [
+      '<a-scene webxr="optionalFeatures: hand-tracking,',
+      '  hit-test, anchors, plane-detection,',
+      '  mesh-detection, dom-overlay;',
+      '  overlayElement: #overlay">',
+      '',
+      'sceneEl.xrSession.enabledFeatures',
+      "// → ['local-floor', 'hand-tracking', …]"
+    ]
+  },
+  'xr-test': {
+    kicker: 'Testing', accent: A4, title: 'Without the right device',
+    body: [
+      '• Desktop or phone: the room stays illustrative (animated hand, panels) and the panel on the left says what is missing.',
+      '• Immersive Web Emulator (Chrome DevTools): a simulated headset, which can also simulate hand input.',
+      '• Meta Quest browser: turn hand tracking on in the headset settings and put the controllers down.',
+      '• Apple Vision Pro (Safari): hands, plus gaze-and-pinch input (transient-pointer).'
+    ]
+  },
+
+  /* ───────────── Station 6 · Multimedia ───────────── */
+  's4-title': { kicker: 'Station 6 · Multimedia', title: 'Spatial audio, video, text and models', accent: A5 },
   audio: {
-    kicker: '<a-sound>', accent: A4, title: 'Positional spatial audio',
+    kicker: '<a-sound>', accent: A5, title: 'Positional spatial audio',
     body: [
       'Three.js PositionalAudio on top of Web Audio (PannerNode): volume and panning depend on your position.',
       'The WAV is synthesized in JavaScript → Blob URL. Walk around the speaker with WASD.'
@@ -383,7 +438,7 @@ export const PANELS = {
     ]
   },
   video: {
-    kicker: '<a-video>', accent: A4, title: 'Video in a 3D dialog',
+    kicker: '<a-video>', accent: A5, title: 'Video in a 3D dialog',
     body: [
       'An HTML <video> becomes a THREE.VideoTexture on a plane. The dialog is a popup entity: frame, video, progress bar and buttons.',
       '• Autoplay policy: sound only after a user gesture → play() on click.',
@@ -401,7 +456,7 @@ export const PANELS = {
     ]
   },
   iframe: {
-    kicker: '<iframe>', accent: A4, title: 'Web pages and YouTube in 3D',
+    kicker: '<iframe>', accent: A5, title: 'Web pages and YouTube in 3D',
     body: [
       'WebGL cannot draw an iframe (cross-origin DOM). Trick from Three.js CSS3DRenderer: a DOM layer over the canvas with the camera\'s perspective + matrix3d, so the iframe sits on a 3D plane and stays interactive.',
       '• Desktop and mobile only: headsets do not render DOM in VR/AR.',
@@ -419,7 +474,7 @@ export const PANELS = {
     ]
   },
   fonts: {
-    kicker: '<a-text>', accent: A4, title: 'SDF text and fonts',
+    kicker: '<a-text>', accent: A5, title: 'SDF text and fonts',
     body: [
       'a-text uses (M)SDF fonts: sharp at any distance and cheap to render.',
       'Built in: roboto, exo2bold, mozillavr, monoid, kelsonsans, aileronsemibold, sourcecodepro, dejavu… or your own with font: url(my-font.json).'
@@ -434,7 +489,7 @@ export const PANELS = {
     ]
   },
   model: {
-    kicker: 'Scene graph', accent: A4, title: 'Hierarchical model',
+    kicker: 'Scene graph', accent: A5, title: 'Hierarchical model',
     body: [
       'Robotic arm made only of nested primitives: each joint inherits its parent\'s transform.',
       'One animation per joint = complex motion with no code.',
@@ -452,10 +507,10 @@ export const PANELS = {
     ]
   },
 
-  /* ───────────── Station 6 · AR · Conclusion ───────────── */
-  's5-title': { kicker: 'Station 6 · Forest · AR · Conclusion', title: 'An animated model in its habitat', accent: A5 },
+  /* ───────────── Station 7 · AR · Conclusion ───────────── */
+  's5-title': { kicker: 'Station 7 · Forest · AR · Conclusion', title: 'An animated model in its habitat', accent: A6 },
   fox: {
-    kicker: 'gltf-model + AnimationMixer', accent: A5, title: 'Animated glTF: the fox',
+    kicker: 'gltf-model + AnimationMixer', accent: A6, title: 'Animated glTF: the fox',
     body: [
       'External GLB (160 KB): skinned mesh with a skeleton and 3 clips (Survey, Walk, Run). Click the fox to cross-fade to the next clip.',
       '• gltf-animation: THREE.AnimationMixer + crossFadeTo',
@@ -474,14 +529,14 @@ export const PANELS = {
     ]
   },
   'ar-intro': {
-    kicker: 'WebXR', accent: A5, title: 'AR zone',
+    kicker: 'WebXR', accent: A6, title: 'AR zone',
     body: [
       'Press "Enter AR" on an Android phone with Chrome or on a compatible headset (Quest).',
       'The museum and the forest disappear and the fox walks on your real floor.'
     ]
   },
   ar: {
-    kicker: 'immersive-ar', accent: A5, title: 'AR with WebXR',
+    kicker: 'immersive-ar', accent: A6, title: 'AR with WebXR',
     body: [
       '• webxr: requests hit-test and local-floor',
       '• hide-on-enter-ar: hides the museum when entering AR',
@@ -502,7 +557,7 @@ export const PANELS = {
     ]
   },
   outro: {
-    kicker: 'Conclusion', accent: A5, title: 'Why A-Frame?',
+    kicker: 'Conclusion', accent: A6, title: 'Why A-Frame?',
     body: [
       '• Declarative HTML: XR prototypes in minutes',
       '• ECS: reusable components',
@@ -514,7 +569,7 @@ export const PANELS = {
     footer: 'Thank you! Questions?'
   },
   res: {
-    kicker: 'Resources', accent: A5, title: 'Keep learning',
+    kicker: 'Resources', accent: A6, title: 'Keep learning',
     body: [
       'Click a link to open it in a new tab.',
       'Credits: Fox (Khronos glTF Sample Assets, CC0 / CC BY 4.0) · Big Buck Bunny (Blender Foundation, CC BY 3.0)'

@@ -13,6 +13,7 @@ import './core/museum-system.js';
 import './core/presenter.js';
 import './components/ui.js';
 import './components/setup.js';
+import './components/hands.js';
 import './components/ecs-demo.js';
 import './components/materials.js';
 import './components/interaction.js';
