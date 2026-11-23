@@ -11,10 +11,10 @@
 
 <!-- ============ STATION 1 · WELCOME AND SETUP ============ -->
 <a-entity id="st0" museum-station="index: 0; name: Welcome" position="0 0 0">
-  <!-- Title a bit higher than in other rooms: the welcome panel sits in front of it -->
-  <a-entity canvas-panel="id: setup-title; width: 4.4" position="0 4.5 -6.8"></a-entity>
+  <!-- Here the title sits right above the welcome panel (on the back wall it would be hidden behind it) -->
+  <a-entity canvas-panel="id: setup-title; width: 2.6" position="0 4.0 -3.25"></a-entity>
   <!-- What A-Frame is, above the Hello WebXR model -->
-  <a-entity canvas-panel="id: welcome; width: 2.6" position="0 2.6 -3.6"></a-entity>
+  <a-entity canvas-panel="id: welcome; width: 2.6" position="0 2.8 -3.2"></a-entity>
 
   <!-- Step 1: include A-Frame (left) -->
   <a-entity position="-3.6 0 -1.5" rotation="0 30 0">
