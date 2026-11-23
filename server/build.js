@@ -8,7 +8,8 @@
  *
  * What changes on a static host:
  *  - no Inspector save service ("Write changes" reports aframe-watcher is not running);
- *  - fonts and controller models load from cdn.aframe.io instead of the local cache.
+ *  - fonts and controller models load from cdn.aframe.io instead of the local cache;
+ *  - resolution is adaptive (dynamic-resolution, min 0.75), while locally it is fixed at 1.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -33,7 +34,9 @@ fs.cpSync(path.join(ROOT, 'vendor'), path.join(DIST, 'vendor'), {
 for (const page of ['index.html', 'room.html']) {
   const file = path.join(DIST, page);
   fs.writeFileSync(file, fs.readFileSync(file, 'utf8')
-    .replace("window.AFRAME_CDN_ROOT = 'vendor/cdn/';", "window.AFRAME_CDN_ROOT = 'https://cdn.aframe.io/';"));
+    .replace("window.AFRAME_CDN_ROOT = 'vendor/cdn/';", "window.AFRAME_CDN_ROOT = 'https://cdn.aframe.io/';")
+    // Local: quality fixed at 1. Published: adaptive resolution (min 0.75) for a steady frame rate
+    .replace(/(dynamic-resolution="[^"]*?);\s*fixed:\s*[\d.]+"/, '$1"'));
 }
 fs.writeFileSync(path.join(DIST, '.nojekyll'), '');   // serve files as they are
 
